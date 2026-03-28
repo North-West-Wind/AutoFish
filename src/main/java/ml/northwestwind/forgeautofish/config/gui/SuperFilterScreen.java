@@ -7,7 +7,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -47,14 +49,14 @@ public class SuperFilterScreen extends Screen {
         reducedHeight = this.height - 90;
         reducedWidth = this.width - 30;
         max = /* (int) Math.round(30 * (reducedWidth / 550.0 + reducedHeight / 330.0) / 2.0) */ 30;
-        original = Config.FILTER.get().stream().map(string -> ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(string))).collect(Collectors.toList());
+        original = Config.FILTER.get().stream().map(string -> ForgeRegistries.ITEMS.getValue(Identifier.parse(string))).collect(Collectors.toList());
         maxPage = (int) Math.ceil(original.size() / (double) max);
         searching = original;
         search = new EditBox(this.font, this.width / 2 - 75, 35, 150, 20, AutoFish.getTranslatableComponent("gui.superfilterscreen.search")) {
             @Override
-            public boolean mouseClicked(double mouseX, double mouseY, int button) {
-                if (button == GLFW.GLFW_MOUSE_BUTTON_2) this.setValue("");
-                return super.mouseClicked(mouseX, mouseY, button);
+            public boolean mouseClicked(MouseButtonEvent ev, boolean flag) {
+                if (ev.button() == GLFW.GLFW_MOUSE_BUTTON_2) this.setValue("");
+                return super.mouseClicked(ev, flag);
             }
         };
         search.setResponder(s -> {
@@ -63,7 +65,7 @@ public class SuperFilterScreen extends Screen {
             String[] tags = Arrays.stream(args).filter(s1 -> s1.startsWith("#")).toArray(String[]::new);
             String[] finalArgs = Arrays.stream(args).filter(s1 -> !s1.startsWith("@") && !s1.startsWith("#")).toArray(String[]::new);;
             searching = original.stream().filter(item -> {
-                ResourceLocation rl = ForgeRegistries.ITEMS.getKey(item);
+                Identifier rl = ForgeRegistries.ITEMS.getKey(item);
                 boolean matchmod = mods.length < 1, matchtag = tags.length < 1, matcharg = finalArgs.length < 1;
                 for (String mod : mods) {
                     mod = mod.toLowerCase().substring(1);
@@ -77,7 +79,7 @@ public class SuperFilterScreen extends Screen {
                     }
                 for (String arg : finalArgs) {
                     arg = arg.toLowerCase();
-                    if (rl != null) matcharg = rl.getPath().contains(arg) || item.getDescription().getString().contains(arg);
+                    if (rl != null) matcharg = rl.getPath().contains(arg);
                 }
                 return matchmod && matchtag && matcharg;
             }).collect(Collectors.toList());
@@ -99,7 +101,6 @@ public class SuperFilterScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(graphics, mouseX, mouseY, partialTicks);
         super.render(graphics, mouseX, mouseY, partialTicks);
         graphics.drawCenteredString(this.font, this.title, this.width / 2, 20, -1);
         Item[] items = searching.toArray(new Item[0]);
@@ -122,9 +123,9 @@ public class SuperFilterScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == GLFW.GLFW_KEY_ESCAPE) Minecraft.getInstance().setScreen(parent);
-        return super.keyPressed(keyCode, scanCode, modifiers);
+    public boolean keyPressed(KeyEvent ev) {
+        if (ev.key() == GLFW.GLFW_KEY_ESCAPE) Minecraft.getInstance().setScreen(parent);
+        return super.keyPressed(ev);
     }
 
     @Override

@@ -10,7 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.FishingRodItem;
@@ -20,7 +20,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -34,10 +34,9 @@ public class AutoFishHandler {
     public static long recastDelay = Config.RECAST_DELAY.get(), reelInDelay = Config.REEL_IN_DELAY.get(), throwDelay = Config.THROW_DELAY.get(), checkInterval = Config.CHECK_INTERVAL.get();
     private static final List<Item> shouldDrop = Lists.newArrayList();
     private static boolean processingDrop, pendingReelIn, pendingRecast, lastTickFishing, afterDrop;
-    private static int dropCd;
+    private static int dropCd, rodSlot;
     private static long tick, checkTick;
     private static List<ItemStack> itemsBeforeFished;
-    private static ItemStack rodStack;
 
     @SubscribeEvent
     public static void onKeyInput(InputEvent.Key e) {
@@ -61,9 +60,9 @@ public class AutoFishHandler {
     }
 
     @SubscribeEvent
-    public static void onPlayerTick(final TickEvent.PlayerTickEvent e) {
-        if (e.side != LogicalSide.CLIENT || !e.phase.equals(TickEvent.Phase.START)) return;
-        Player player = e.player;
+    public static void onPlayerTick(final TickEvent.PlayerTickEvent.Pre ev) {
+        if (ev.side() != LogicalSide.CLIENT) return;
+        Player player = ev.player();
         if (!player.getUUID().equals(Minecraft.getInstance().player.getUUID())) return;
         if (checkTick > 0) checkTick--;
         else {
@@ -74,12 +73,12 @@ public class AutoFishHandler {
             }
         }
         if (lastTickFishing && player.fishing == null)
-            itemsBeforeFished = Lists.newArrayList(player.getInventory().items);
+            itemsBeforeFished = Lists.newArrayList(player.getInventory().getNonEquipmentItems());
         lastTickFishing = player.fishing != null;
         if (afterDrop) {
-            if (tick == 0 && rodStack != null) {
-                player.getInventory().setPickedItem(rodStack);
-                rodStack = null;
+            if (tick == 0 && rodSlot != -1) {
+                player.getInventory().setSelectedSlot(rodSlot);
+                rodSlot = -1;
             }
             tick++;
             if (tick > 2) {
@@ -100,7 +99,7 @@ public class AutoFishHandler {
         if (processingDrop) {
             if (dropCd > 0) dropCd--;
             dropItem(player);
-            if (shouldDrop.size() <= 0) {
+            if (shouldDrop.isEmpty()) {
                 processingDrop = false;
                 afterDrop = true;
             }
@@ -150,12 +149,12 @@ public class AutoFishHandler {
             AutoFish.LOGGER.info("Fishing rod broke. Finding replacement...");
             boolean found = false;
             for (int i = 0; i < 9; i++) {
-                if (i == player.getInventory().selected) continue;
+                if (i == player.getInventory().getSelectedSlot()) continue;
                 ItemStack stack = player.getInventory().getItem(i);
                 if (stack.getItem() instanceof FishingRodItem) {
                     if (rodprotect && stack.getMaxDamage() - stack.getDamageValue() < 2) continue;
                     AutoFish.LOGGER.info("Found fishing rod for replacement");
-                    player.getInventory().selected = i;
+                    player.getInventory().setSelectedSlot(i);
                     found = true;
                     break;
                 }
@@ -176,9 +175,9 @@ public class AutoFishHandler {
 
     private static void checkItem(Player player) {
         if (itemsBeforeFished != null) {
-            List<ItemStack> items = player.getInventory().items;
+            List<ItemStack> items = player.getInventory().getNonEquipmentItems();
             for (String name : Config.FILTER.get()) {
-                ResourceLocation rl = ResourceLocation.parse(name);
+                Identifier rl = Identifier.parse(name);
                 Item item = ForgeRegistries.ITEMS.getValue(rl);
                 if (item == null) continue;
                 int newCount = items.stream().filter(stack -> stack.getItem().equals(item)).mapToInt(ItemStack::getCount).reduce(Integer::sum).orElse(0);
@@ -187,25 +186,24 @@ public class AutoFishHandler {
                 for (int ii = 0; ii < diff; ii++) shouldDrop.add(item);
             }
             itemsBeforeFished = null;
-            if (shouldDrop.size() > 0) {
+            if (!shouldDrop.isEmpty()) {
                 processingDrop = true;
-                rodStack = player.getMainHandItem();
+                rodSlot = player.getInventory().getSelectedSlot();
             }
         }
     }
 
     private static void dropItem(Player player) {
         if (dropCd == 4 || dropCd == 2 || dropCd == 1) return;
-        Item item = shouldDrop.get(0);
+        Item item = shouldDrop.getFirst();
         if (dropCd == 3) {
             ((LocalPlayer) player).drop(false);
             shouldDrop.remove(item);
             return;
         }
         for (int ii = 0; ii < 9; ii++) {
-            final ItemStack stack = player.getInventory().items.get(ii);
-            if (!stack.getItem().equals(item)) continue;
-            player.getInventory().setPickedItem(stack);
+            if (!player.getInventory().getItem(ii).getItem().equals(item)) continue;
+            player.getInventory().setSelectedSlot(ii);
             dropCd = 5;
             return;
         }

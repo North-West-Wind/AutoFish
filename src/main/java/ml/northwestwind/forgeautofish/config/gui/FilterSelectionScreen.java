@@ -8,7 +8,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -26,7 +28,7 @@ public class FilterSelectionScreen extends Screen {
     private EditBox search;
     private final Collection<Item> original = ForgeRegistries.ITEMS.getValues();
     private Collection<Item> searching;
-    private final Set<Item> selected = new HashSet<>(Config.FILTER.get().stream().map(string -> ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(string))).collect(Collectors.toList()));
+    private final Set<Item> selected = new HashSet<>(Config.FILTER.get().stream().map(string -> ForgeRegistries.ITEMS.getValue(Identifier.parse(string))).collect(Collectors.toList()));
     private int page, maxPage = (int) Math.ceil(original.size() / 300.0), max = 300;
     private boolean clickProcessed = true;
     private double clickX, clickY;
@@ -48,9 +50,9 @@ public class FilterSelectionScreen extends Screen {
         searching = original;
         search = new EditBox(this.font, this.width / 2 - 75, 35, 150, 20, AutoFish.getTranslatableComponent("gui.superfilterscreen.search")) {
             @Override
-            public boolean mouseClicked(double mouseX, double mouseY, int button) {
-                if (button == GLFW.GLFW_MOUSE_BUTTON_2) this.setValue("");
-                return super.mouseClicked(mouseX, mouseY, button);
+            public boolean mouseClicked(MouseButtonEvent ev, boolean p_430750_) {
+                if (ev.button() == GLFW.GLFW_MOUSE_BUTTON_2) this.setValue("");
+                return super.mouseClicked(ev, p_430750_);
             }
         };
         search.setResponder(s -> {
@@ -59,7 +61,7 @@ public class FilterSelectionScreen extends Screen {
             String[] tags = Arrays.stream(args).filter(s1 -> s1.startsWith("#")).toArray(String[]::new);
             String[] finalArgs = Arrays.stream(args).filter(s1 -> !s1.startsWith("@") && !s1.startsWith("#")).toArray(String[]::new);;
             searching = original.stream().filter(item -> {
-                ResourceLocation rl = ForgeRegistries.ITEMS.getKey(item);
+                Identifier rl = ForgeRegistries.ITEMS.getKey(item);
                 boolean matchmod = mods.length < 1, matchtag = tags.length < 1, matcharg = finalArgs.length < 1;
                 for (String mod : mods) {
                     mod = mod.toLowerCase().substring(1);
@@ -73,7 +75,7 @@ public class FilterSelectionScreen extends Screen {
                     }
                 for (String arg : finalArgs) {
                     arg = arg.toLowerCase();
-                    if (rl != null) matcharg = rl.getPath().contains(arg) || item.getDescription().getString().contains(arg);
+                    if (rl != null) matcharg = rl.getPath().contains(arg);
                 }
                 return matchmod && matchtag && matcharg;
             }).collect(Collectors.toList());
@@ -99,16 +101,15 @@ public class FilterSelectionScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(graphics, mouseX, mouseY, partialTicks);
         super.render(graphics, mouseX, mouseY, partialTicks);
         graphics.drawCenteredString(this.font, this.title, this.width / 2, 20, -1);Collection<Item> searchingCopy = Lists.newArrayList();
         Collection<Item> prioritized = searching.stream().filter(item -> {
-            ResourceLocation rl = ForgeRegistries.ITEMS.getKey(item);
+            Identifier rl = ForgeRegistries.ITEMS.getKey(item);
             if (rl == null) return false;
             boolean pri = Config.PRIORITIZE.get().contains(rl.toString());
             if (!pri) searchingCopy.add(item);
             return pri;
-        }).collect(Collectors.toList());
+        }).toList();
         Item[] items = Stream.concat(prioritized.stream(), searchingCopy.stream()).toArray(Item[]::new);
         if (items.length > 0 && page >= 0) {
             for (int i = page * max; i < Math.min((page + 1) * max, searching.size()); i++) {
@@ -127,7 +128,8 @@ public class FilterSelectionScreen extends Screen {
                     }
                     if (selected.contains(item)) graphics.fillGradient(x - 2, y - 2, x + 18, y + 18, Color.GREEN.getRGB(), Color.GREEN.getRGB());
                     else if (isMouseInRange(mouseX, mouseY, x, y,x + 16, y + 16)) graphics.fillGradient(x - 2, y - 2, x + 18, y + 18, Color.LIGHT_GRAY.getRGB(), Color.LIGHT_GRAY.getRGB());
-                    if (isMouseInRange(mouseX, mouseY, x, y,x + 16, y + 16)) graphics.renderTooltip(this.font, stack, mouseX, mouseY);
+                    //if (isMouseInRange(mouseX, mouseY, x, y,x + 16, y + 16)) graphics.item(this.font, stack, mouseX, mouseY);
+                    graphics.renderItem(stack, x, y);
                 }
             }
         }
@@ -147,20 +149,20 @@ public class FilterSelectionScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+    public boolean keyPressed(KeyEvent ev) {
+        if (ev.key() == GLFW.GLFW_KEY_ESCAPE) {
             if (!search.isFocused()) Minecraft.getInstance().setScreen(parent);
             else search.setFocused(false);
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(ev);
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        clickX = mouseX;
-        clickY = mouseY;
+    public boolean mouseClicked(MouseButtonEvent ev, boolean flag) {
+        clickX = ev.x();
+        clickY = ev.y();
         clickProcessed = false;
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(ev, flag);
     }
 
     @Override

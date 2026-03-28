@@ -5,6 +5,7 @@ import ml.northwestwind.forgeautofish.keybind.KeyBinds;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -20,13 +21,13 @@ public class AutoFish
     public static final String MODID = "forgeautofish";
     public static final Logger LOGGER = LogManager.getLogger();
 
-    public AutoFish() {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT);
+    public AutoFish(FMLJavaModLoadingContext context) {
+        context.registerConfig(ModConfig.Type.CLIENT, Config.CLIENT);
 
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(KeyBinds::register);
+        RegisterKeyMappingsEvent.BUS.addListener(KeyBinds::register);
 
         Config.loadConfig(FMLPaths.CONFIGDIR.get().resolve("forgeautofish-client.toml").toString());
-        ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, ()->new IExtensionPoint.DisplayTest(()->"ANY", (remote, isServer)-> true));
+        context.registerExtensionPoint(IExtensionPoint.DisplayTest.class, ()->new IExtensionPoint.DisplayTest(()->"ANY", (remote, isServer)-> true));
     }
 
     public static MutableComponent getTranslatableComponent(String key, Object... args) {
