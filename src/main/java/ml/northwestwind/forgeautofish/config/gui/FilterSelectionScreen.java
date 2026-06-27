@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import ml.northwestwind.forgeautofish.AutoFish;
 import ml.northwestwind.forgeautofish.config.Config;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -100,9 +100,10 @@ public class FilterSelectionScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        super.render(graphics, mouseX, mouseY, partialTicks);
-        graphics.drawCenteredString(this.font, this.title, this.width / 2, 20, -1);Collection<Item> searchingCopy = Lists.newArrayList();
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractRenderState(graphics, mouseX, mouseY, partialTicks);
+        graphics.centeredText(this.font, this.title, this.width / 2, 20, -1);
+        Collection<Item> searchingCopy = Lists.newArrayList();
         Collection<Item> prioritized = searching.stream().filter(item -> {
             Identifier rl = ForgeRegistries.ITEMS.getKey(item);
             if (rl == null) return false;
@@ -120,7 +121,7 @@ public class FilterSelectionScreen extends Screen {
                 int y = getYPos(k, reducedHeight);
                 ItemStack stack = new ItemStack(item);
                 if (!stack.isEmpty()) {
-                    graphics.renderItem(stack, x, y);
+                    graphics.item(stack, x, y);
                     if (!clickProcessed && isMouseInRange(clickX, clickY, x, y, x+16, y+16)) {
                         if (selected.contains(item)) selected.remove(item);
                         else selected.add(item);
@@ -129,11 +130,11 @@ public class FilterSelectionScreen extends Screen {
                     if (selected.contains(item)) graphics.fillGradient(x - 2, y - 2, x + 18, y + 18, Color.GREEN.getRGB(), Color.GREEN.getRGB());
                     else if (isMouseInRange(mouseX, mouseY, x, y,x + 16, y + 16)) graphics.fillGradient(x - 2, y - 2, x + 18, y + 18, Color.LIGHT_GRAY.getRGB(), Color.LIGHT_GRAY.getRGB());
                     //if (isMouseInRange(mouseX, mouseY, x, y,x + 16, y + 16)) graphics.item(this.font, stack, mouseX, mouseY);
-                    graphics.renderItem(stack, x, y);
+                    graphics.item(stack, x, y);
                 }
             }
         }
-        search.render(graphics, mouseX, mouseY, partialTicks);
+        search.extractRenderState(graphics, mouseX, mouseY, partialTicks);
     }
 
     private boolean isMouseInRange(double mouseX, double mouseY, int x1, int y1, int x2, int y2) {

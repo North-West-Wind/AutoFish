@@ -44,17 +44,17 @@ public class AutoFishHandler {
         LocalPlayer player = minecraft.player;
         if (KeyBinds.autofish.consumeClick()) {
             Config.setAutoFish(!autofish);
-            if (player != null) player.displayClientMessage(getText("forgeautofish", autofish), true);
+            if (player != null) player.sendOverlayMessage(getText("forgeautofish", autofish));
         } else if (KeyBinds.rodprotect.consumeClick()) {
             Config.setRodProtect(!rodprotect);
-            if (player != null) player.displayClientMessage(getText("rodprotect", rodprotect), true);
+            if (player != null) player.sendOverlayMessage(getText("rodprotect", rodprotect));
         } else if (KeyBinds.autoreplace.consumeClick()) {
             Config.setAutoReplace(!autoreplace);
-            if (player != null) player.displayClientMessage(getText("autoreplace", autoreplace), true);
+            if (player != null) player.sendOverlayMessage(getText("autoreplace", autoreplace));
         } else if (KeyBinds.itemfilter.consumeClick()) {
             Config.enableFilter(!itemfilter);
             if (player != null)
-                player.displayClientMessage(getText("itemfilter", itemfilter), true);
+                player.sendOverlayMessage(getText("itemfilter", itemfilter));
         } else if (KeyBinds.settings.consumeClick())
             minecraft.setScreen(new SettingsScreen());
     }
@@ -142,7 +142,7 @@ public class AutoFishHandler {
             if (autoreplace) needReplace = true;
             else {
                 autofish = false;
-                player.displayClientMessage(getText("forgeautofish", autofish), true);
+                player.sendOverlayMessage(getText("forgeautofish", autofish));
                 return;
             }
         if (needReplace) {

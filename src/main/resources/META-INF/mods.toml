@@ -23,13 +23,13 @@ Note that this is my first mod, so there might be bugs.
 [[dependencies.forgeautofish]]
     modId="forge"
     mandatory=true
-    versionRange="[51,)"
+    versionRange="[64,)"
     ordering="NONE"
     side="BOTH"
     
 [[dependencies.forgeautofish]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.21,1.22)"
+    versionRange="[26.1.2,26.2)"
     ordering="NONE"
     side="BOTH"

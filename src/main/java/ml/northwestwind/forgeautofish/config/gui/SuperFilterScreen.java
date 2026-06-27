@@ -3,7 +3,7 @@ package ml.northwestwind.forgeautofish.config.gui;
 import ml.northwestwind.forgeautofish.AutoFish;
 import ml.northwestwind.forgeautofish.config.Config;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -100,9 +100,9 @@ public class SuperFilterScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        super.render(graphics, mouseX, mouseY, partialTicks);
-        graphics.drawCenteredString(this.font, this.title, this.width / 2, 20, -1);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractRenderState(graphics, mouseX, mouseY, partialTicks);
+        graphics.centeredText(this.font, this.title, this.width / 2, 20, -1);
         Item[] items = searching.toArray(new Item[0]);
         for (int i = page * max; i < Math.min((page + 1) * max, searching.size()); i++) {
             Item item = items[i];
@@ -110,11 +110,11 @@ public class SuperFilterScreen extends Screen {
             int k = (i % max) % (max / 3);
             ItemStack stack = ItemStack.EMPTY;
             if (item != null) stack = new ItemStack(item);
-            if (!stack.isEmpty()) graphics.renderItem(stack, (reducedWidth * h / 3) + 15, (reducedHeight * k / (max / 3)) + 90);
-            graphics.drawString(this.font, stack.getDisplayName().getString(), ((reducedWidth * h / 3) + 45), ((reducedHeight * k / (max / 3)) + 95), Color.WHITE.getRGB());
+            if (!stack.isEmpty()) graphics.item(stack, (reducedWidth * h / 3) + 15, (reducedHeight * k / (max / 3)) + 90);
+            graphics.text(this.font, stack.getDisplayName().getString(), ((reducedWidth * h / 3) + 45), ((reducedHeight * k / (max / 3)) + 95), Color.WHITE.getRGB());
             //this.font.draw(graphics, stack.getDisplayName().getString(), (float) ((reducedWidth * h / 3) + 45), (float) ((reducedHeight * k / (max / 3)) + 95), Color.WHITE.getRGB());
         }
-        search.render(graphics, mouseX, mouseY, partialTicks);
+        search.extractRenderState(graphics, mouseX, mouseY, partialTicks);
     }
 
     @Override
