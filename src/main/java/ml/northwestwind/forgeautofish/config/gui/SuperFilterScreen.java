@@ -87,9 +87,9 @@ public class SuperFilterScreen extends Screen {
             if (page > maxPage - 1) page = maxPage - 1;
         });
         addRenderableWidget(search);
-        Button add = new Button.Builder(AutoFish.getTranslatableComponent("gui.superfilterscreen.openfilter"), button -> Minecraft.getInstance().setScreen(new FilterSelectionScreen(this))).pos(this.width / 2 - 75, 60).size(72, 20).build();
+        Button add = new Button.Builder(AutoFish.getTranslatableComponent("gui.superfilterscreen.openfilter"), button -> Minecraft.getInstance().setScreenAndShow(new FilterSelectionScreen(this))).pos(this.width / 2 - 75, 60).size(72, 20).build();
         addRenderableWidget(add);
-        Button done = new Button.Builder(AutoFish.getTranslatableComponent("gui.superfilterscreen.done"), button -> Minecraft.getInstance().setScreen(parent)).pos(this.width / 2 + 3, 60).size(72, 20).build();
+        Button done = new Button.Builder(AutoFish.getTranslatableComponent("gui.superfilterscreen.done"), button -> Minecraft.getInstance().setScreenAndShow(parent)).pos(this.width / 2 + 3, 60).size(72, 20).build();
         addRenderableWidget(done);
         previous = new Button.Builder(AutoFish.getLiteralComponent("<"), button -> { if (page > 0) page--; }).pos(this.width / 2 - 100, 60).size(20, 20).build();
         previous.visible = false;
@@ -124,7 +124,7 @@ public class SuperFilterScreen extends Screen {
 
     @Override
     public boolean keyPressed(KeyEvent ev) {
-        if (ev.key() == GLFW.GLFW_KEY_ESCAPE) Minecraft.getInstance().setScreen(parent);
+        if (ev.key() == GLFW.GLFW_KEY_ESCAPE) Minecraft.getInstance().setScreenAndShow(parent);
         return super.keyPressed(ev);
     }
 

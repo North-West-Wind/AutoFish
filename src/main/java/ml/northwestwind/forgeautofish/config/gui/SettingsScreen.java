@@ -21,11 +21,11 @@ public class SettingsScreen extends Screen {
     @Override
     protected void init() {
         Button.Builder[] builders = {
-                new Button.Builder(AutoFish.getTranslatableComponent("gui.forgeautofish.recastdelay"), button -> Minecraft.getInstance().setScreen(new RecastDelayScreen(this))),
-                new Button.Builder(AutoFish.getTranslatableComponent("gui.forgeautofish.reelindelay"), button -> Minecraft.getInstance().setScreen(new ReelInDelayScreen(this))),
-                new Button.Builder(AutoFish.getTranslatableComponent("gui.forgeautofish.throwdelay"), button -> Minecraft.getInstance().setScreen(new ThrowDelayScreen(this))),
-                new Button.Builder(AutoFish.getTranslatableComponent("gui.forgeautofish.checkinterval"), button -> Minecraft.getInstance().setScreen(new CheckIntervalScreen(this))),
-                new Button.Builder(AutoFish.getTranslatableComponent("gui.forgeautofish.filter"), button -> Minecraft.getInstance().setScreen(new SuperFilterScreen(this)))
+                new Button.Builder(AutoFish.getTranslatableComponent("gui.forgeautofish.recastdelay"), button -> Minecraft.getInstance().setScreenAndShow(new RecastDelayScreen(this))),
+                new Button.Builder(AutoFish.getTranslatableComponent("gui.forgeautofish.reelindelay"), button -> Minecraft.getInstance().setScreenAndShow(new ReelInDelayScreen(this))),
+                new Button.Builder(AutoFish.getTranslatableComponent("gui.forgeautofish.throwdelay"), button -> Minecraft.getInstance().setScreenAndShow(new ThrowDelayScreen(this))),
+                new Button.Builder(AutoFish.getTranslatableComponent("gui.forgeautofish.checkinterval"), button -> Minecraft.getInstance().setScreenAndShow(new CheckIntervalScreen(this))),
+                new Button.Builder(AutoFish.getTranslatableComponent("gui.forgeautofish.filter"), button -> Minecraft.getInstance().setScreenAndShow(new SuperFilterScreen(this)))
         };
 
         for (int ii = 0; ii < builders.length; ii++) {

@@ -41,7 +41,7 @@ public class ReelInDelayScreen extends Screen {
                 if (delay < Config.REEL_IN_DELAY_RANGE[1] || delay > Config.REEL_IN_DELAY_RANGE[2]) reelInDelay.setValue(Long.toString(AutoFishHandler.reelInDelay));
                 else {
                     Config.setReelInDelay(delay);
-                    Minecraft.getInstance().setScreen(parent);
+                    Minecraft.getInstance().setScreenAndShow(parent);
                 }
             }
         }).pos(this.width / 2 - 75, this.height / 2).size(150, 20).build();
@@ -76,7 +76,7 @@ public class ReelInDelayScreen extends Screen {
 
     @Override
     public boolean keyPressed(KeyEvent ev) {
-        if (ev.key() == GLFW.GLFW_KEY_ESCAPE) Minecraft.getInstance().setScreen(parent);
+        if (ev.key() == GLFW.GLFW_KEY_ESCAPE) Minecraft.getInstance().setScreenAndShow(parent);
         return super.keyPressed(ev);
     }
 

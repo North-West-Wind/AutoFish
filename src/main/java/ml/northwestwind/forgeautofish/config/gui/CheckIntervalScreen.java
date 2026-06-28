@@ -41,7 +41,7 @@ public class CheckIntervalScreen extends Screen {
                 if (delay < Config.CHECK_INTERVAL_RANGE[1] || delay > Config.CHECK_INTERVAL_RANGE[2]) checkInterval.setValue(Long.toString(AutoFishHandler.checkInterval));
                 else {
                     Config.setCheckInterval(delay);
-                    Minecraft.getInstance().setScreen(parent);
+                    Minecraft.getInstance().setScreenAndShow(parent);
                 }
             }
         }).pos(this.width / 2 - 75, this.height / 2).size(150, 20).build();
@@ -76,7 +76,7 @@ public class CheckIntervalScreen extends Screen {
 
     @Override
     public boolean keyPressed(KeyEvent ev) {
-        if (ev.key() == GLFW.GLFW_KEY_ESCAPE) Minecraft.getInstance().setScreen(parent);
+        if (ev.key() == GLFW.GLFW_KEY_ESCAPE) Minecraft.getInstance().setScreenAndShow(parent);
         return super.keyPressed(ev);
     }
 

@@ -41,7 +41,7 @@ public class ThrowDelayScreen extends Screen {
                 if (delay < Config.THROW_DELAY_RANGE[1] || delay > Config.THROW_DELAY_RANGE[2]) throwDelay.setValue(Long.toString(AutoFishHandler.throwDelay));
                 else {
                     Config.setThrowDelay(delay);
-                    Minecraft.getInstance().setScreen(parent);
+                    Minecraft.getInstance().setScreenAndShow(parent);
                 }
             }
         }).pos(this.width / 2 - 75, this.height / 2).size(150, 20).build();
@@ -76,7 +76,7 @@ public class ThrowDelayScreen extends Screen {
 
     @Override
     public boolean keyPressed(KeyEvent ev) {
-        if (ev.key() == GLFW.GLFW_KEY_ESCAPE) Minecraft.getInstance().setScreen(parent);
+        if (ev.key() == GLFW.GLFW_KEY_ESCAPE) Minecraft.getInstance().setScreenAndShow(parent);
         return super.keyPressed(ev);
     }
 

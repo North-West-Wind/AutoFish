@@ -56,7 +56,7 @@ public class AutoFishHandler {
             if (player != null)
                 player.sendOverlayMessage(getText("itemfilter", itemfilter));
         } else if (KeyBinds.settings.consumeClick())
-            minecraft.setScreen(new SettingsScreen());
+            minecraft.setScreenAndShow(new SettingsScreen());
     }
 
     @SubscribeEvent
