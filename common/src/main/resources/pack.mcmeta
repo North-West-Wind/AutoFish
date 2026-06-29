@@ -1,0 +1,7 @@
+{
+    "pack": {
+        "description": "AutoFish resource pack",
+        "pack_format": 9,
+        "_comment": "Resources containing texts for AutoFish."
+    }
+}
