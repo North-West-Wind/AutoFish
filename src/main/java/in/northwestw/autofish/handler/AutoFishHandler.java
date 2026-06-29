@@ -220,7 +220,7 @@ public class AutoFishHandler {
     private static void sendOverlayMessage(Player player, String key, boolean state) {
         Component component = AutoFish.getTranslatableComponent("toggle." + key, AutoFish.getTranslatableComponent("toggle.enable." + state).withStyle(state ? ChatFormatting.GREEN : ChatFormatting.RED));
         //? if >=26.1 {
-        player.sendOverlayMessage(getText("autofish", Config.autoFish));
+        player.sendOverlayMessage(component);
         //? } else
         //player.displayClientMessage(component, true);
     }
