@@ -1,28 +1,28 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'net.fabricmc.fabric-loom' version '1.16.3'
+    id 'fabric-loom' version '1.13-SNAPSHOT'
 }
 
-ext.loaderName = "fabric"
+ext.loaderName = "fabric-o"
 
 apply from: rootProject.file('gradle/shared.gradle')
 
 loom {
-    def aw = rootProject.file("src/${loaderName}/resources/${mod_id}.accesswidener")
+    def aw = rootProject.file("src/fabric/resources/${mod_id}.accesswidener")
     if (aw.exists()) {
         accessWidenerPath.set(aw)
     }
     runs {
         client {
             client()
-            setConfigName('Fabric Client')
+            setConfigName('Fabric-o Client')
             ideConfigGenerated(true)
             runDir('runs/client')
         }
         server {
             server()
-            setConfigName('Fabric Server')
+            setConfigName('Fabric-o Server')
             ideConfigGenerated(true)
             runDir('runs/server')
         }

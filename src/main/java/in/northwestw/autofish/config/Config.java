@@ -13,10 +13,10 @@ import java.util.List;
 public class Config {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    public static final long[] RECAST_DELAY_RANGE = { 20L, 1L, 600L };
-    public static final long[] REEL_IN_DELAY_RANGE = { 0L, 0L, 600L };
-    public static final long[] THROW_DELAY_RANGE = { 10L, 5L, 600L };
-    public static final long[] CHECK_INTERVAL_RANGE = { 200L, 20L, 72000L };
+    public static final long[] RECAST_DELAY_RANGE = { 1L, 600L };
+    public static final long[] REEL_IN_DELAY_RANGE = { 0L, 600L };
+    public static final long[] THROW_DELAY_RANGE = { 5L, 600L };
+    public static final long[] CHECK_INTERVAL_RANGE = { 20L, 72000L };
 
     public static long recastDelay = 20, reelInDelay = 0, throwDelay = 10, checkInterval = 200;
     public static boolean autoFish = true, rodProtect = true, autoReplace = true, allFilters = true;
@@ -75,19 +75,19 @@ public class Config {
                     filter = json.getAsJsonArray("filter").asList().stream().map(JsonElement::getAsString).toList();
 
                 // validate
-                if (recastDelay < 1 || recastDelay > 600) {
+                if (recastDelay < RECAST_DELAY_RANGE[0] || recastDelay > RECAST_DELAY_RANGE[1]) {
                     AutoFish.LOGGER.warn("recast_delay must be in range [1, 600]. Defaults to 20");
                     recastDelay = 20;
                 }
-                if (reelInDelay < 0 || reelInDelay > 600) {
+                if (reelInDelay < REEL_IN_DELAY_RANGE[0] || reelInDelay > REEL_IN_DELAY_RANGE[1]) {
                     AutoFish.LOGGER.warn("reel_in_delay must be in range [0, 600]. Defaults to 0");
                     reelInDelay = 0;
                 }
-                if (throwDelay < 5 || throwDelay > 600) {
+                if (throwDelay < THROW_DELAY_RANGE[0] || throwDelay > THROW_DELAY_RANGE[1]) {
                     AutoFish.LOGGER.warn("throw_delay must be in range [5, 600]. Defaults to 10");
                     throwDelay = 10;
                 }
-                if (checkInterval < 20 || checkInterval > 72000) {
+                if (checkInterval < CHECK_INTERVAL_RANGE[0] || checkInterval > CHECK_INTERVAL_RANGE[1]) {
                     AutoFish.LOGGER.warn("check_interval must be in range [20, 72000]. Defaults to 200");
                     checkInterval = 200;
                 }

@@ -6,7 +6,6 @@ plugins {
 }
 
 ext.loaderName = "forge"
-ext.mcVersionName = "26.2"
 
 apply from: rootProject.file('gradle/shared.gradle')
 
@@ -39,7 +38,6 @@ minecraft {
 
         register('data') {
             workingDir = rootProject.file('runs/data')
-
             args '--mod', mod_id, '--all', '--output', rootProject.file("src/${loaderName}/generated/resources"), '--existing', rootProject.file("src/${loaderName}/resources")
         }
     }

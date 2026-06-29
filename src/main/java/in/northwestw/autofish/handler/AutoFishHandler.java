@@ -37,16 +37,16 @@ public class AutoFishHandler {
         LocalPlayer player = minecraft.player;
         if (KeyBinds.autofish.consumeClick()) {
             Config.setAutoFish(!Config.autoFish);
-            if (player != null) player.sendOverlayMessage(getText("autofish", Config.autoFish));
+            if (player != null) sendOverlayMessage(player, "autofish", Config.autoFish);
         } else if (KeyBinds.rodprotect.consumeClick()) {
             Config.setRodProtect(!Config.rodProtect);
-            if (player != null) player.sendOverlayMessage(getText("rodprotect", Config.rodProtect));
+            if (player != null) sendOverlayMessage(player, "rodprotect", Config.rodProtect);
         } else if (KeyBinds.autoreplace.consumeClick()) {
             Config.setAutoReplace(!Config.autoReplace);
-            if (player != null) player.sendOverlayMessage(getText("autoreplace", Config.autoReplace));
+            if (player != null) sendOverlayMessage(player, "autoreplace", Config.autoReplace);
         } else if (KeyBinds.itemfilter.consumeClick()) {
             Config.enableFilter(!Config.allFilters);
-            if (player != null) player.sendOverlayMessage(getText("itemfilter", Config.allFilters));
+            if (player != null) sendOverlayMessage(player, "itemfilter", Config.allFilters);
         } else if (KeyBinds.settings.consumeClick())
             minecraft.setScreenAndShow(new SettingsScreen());
     }
@@ -121,7 +121,10 @@ public class AutoFishHandler {
         if (hand == null) return;
         player.getInventory().getNonEquipmentItems().forEach(stack -> {
             Identifier rl = BuiltInRegistries.ITEM.getKey(stack.getItem());
+            //? if >=26.1 {
             itemsBeforeFished.put(rl, itemsBeforeFished.getOrDefault(rl, 0) + stack.count());
+            //? } else
+            //itemsBeforeFished.put(rl, itemsBeforeFished.getOrDefault(rl, 0) + stack.getCount());
         });
         click(player, hand, Minecraft.getInstance().gameMode);
         ItemStack fishingRod = player.getItemInHand(hand);
@@ -133,7 +136,7 @@ public class AutoFishHandler {
             if (Config.autoReplace) needReplace = true;
             else {
                 Config.autoFish = false;
-                player.sendOverlayMessage(getText("forgeautofish", Config.autoFish));
+                sendOverlayMessage(player, "forgeautofish", Config.autoFish);
                 return;
             }
         if (needReplace) {
@@ -214,7 +217,11 @@ public class AutoFishHandler {
         else return null;
     }
 
-    private static Component getText(String key, boolean bool) {
-        return AutoFish.getTranslatableComponent("toggle." + key, AutoFish.getTranslatableComponent("toggle.enable." + bool).withStyle(bool ? ChatFormatting.GREEN : ChatFormatting.RED));
+    private static void sendOverlayMessage(Player player, String key, boolean state) {
+        Component component = AutoFish.getTranslatableComponent("toggle." + key, AutoFish.getTranslatableComponent("toggle.enable." + state).withStyle(state ? ChatFormatting.GREEN : ChatFormatting.RED));
+        //? if >=26.1 {
+        player.sendOverlayMessage(getText("autofish", Config.autoFish));
+        //? } else
+        //player.displayClientMessage(component, true);
     }
 }

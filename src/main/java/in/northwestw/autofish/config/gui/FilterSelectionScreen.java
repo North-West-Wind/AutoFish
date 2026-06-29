@@ -4,7 +4,10 @@ import com.google.common.collect.Lists;
 import in.northwestw.autofish.AutoFish;
 import in.northwestw.autofish.config.Config;
 import net.minecraft.client.Minecraft;
+//? if >=26.1 {
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+//?} else
+//import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -18,7 +21,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 
-import java.awt.*;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -79,7 +81,7 @@ public class FilterSelectionScreen extends Screen {
                 return matchmod && matchtag && matcharg;
             }).collect(Collectors.toList());
             maxPage = (int) Math.ceil(searching.size() / (double) max);
-            if (page > maxPage - 1) page = maxPage - 1;
+            if (page > maxPage - 1) page = Math.max(0, maxPage - 1);
         });
         addRenderableWidget(search);
         Button add = new Button.Builder(AutoFish.getTranslatableComponent("gui.filterselection.save"), button -> {
@@ -99,9 +101,15 @@ public class FilterSelectionScreen extends Screen {
     }
 
     @Override
+    //? if >=26.1 {
     public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.extractRenderState(graphics, mouseX, mouseY, partialTicks);
         graphics.centeredText(this.font, this.title, this.width / 2, 20, -1);
+    //?} else {
+    /*public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        super.render(graphics, mouseX, mouseY, partialTicks);
+        graphics.drawCenteredString(this.font, this.title, this.width / 2, 20, -1);
+        *///?}
         Collection<Item> searchingCopy = Lists.newArrayList();
         Collection<Item> prioritized = searching.stream().filter(item -> {
             Optional<ResourceKey<Item>> opt = BuiltInRegistries.ITEM.getResourceKey(item);
@@ -121,20 +129,29 @@ public class FilterSelectionScreen extends Screen {
                 int y = getYPos(k, reducedHeight);
                 ItemStack stack = new ItemStack(item);
                 if (!stack.isEmpty()) {
+                    //? if >=26.1 {
                     graphics.item(stack, x, y);
+                    //? } else
+                    //graphics.renderItem(stack, x, y);
                     if (!clickProcessed && isMouseInRange(clickX, clickY, x, y, x+16, y+16)) {
                         if (selected.contains(item)) selected.remove(item);
                         else selected.add(item);
                         clickProcessed = true;
                     }
-                    if (selected.contains(item)) graphics.fillGradient(x - 2, y - 2, x + 18, y + 18, Color.GREEN.getRGB(), Color.GREEN.getRGB());
-                    else if (isMouseInRange(mouseX, mouseY, x, y,x + 16, y + 16)) graphics.fillGradient(x - 2, y - 2, x + 18, y + 18, Color.LIGHT_GRAY.getRGB(), Color.LIGHT_GRAY.getRGB());
+                    if (selected.contains(item)) graphics.fillGradient(x - 2, y - 2, x + 18, y + 18, 0xFF00FF00, 0xFF00FF00);
+                    else if (isMouseInRange(mouseX, mouseY, x, y,x + 16, y + 16)) graphics.fillGradient(x - 2, y - 2, x + 18, y + 18, 0xFFC0C0C0, 0xFFC0C0C0);
                     //if (isMouseInRange(mouseX, mouseY, x, y,x + 16, y + 16)) graphics.item(this.font, stack, mouseX, mouseY);
+                    //? if >=26.1 {
                     graphics.item(stack, x, y);
+                    //? } else
+                    //graphics.renderItem(stack, x, y);
                 }
             }
         }
+        //? if >=26.1 {
         search.extractRenderState(graphics, mouseX, mouseY, partialTicks);
+        //?} else
+        //search.render(graphics, mouseX, mouseY, partialTicks);
     }
 
     private boolean isMouseInRange(double mouseX, double mouseY, int x1, int y1, int x2, int y2) {

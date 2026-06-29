@@ -11,6 +11,7 @@ pluginManagement {
             }
             filter {
                 includeGroupAndSubgroups('net.fabricmc')
+                includeGroup('fabric-loom')
             }
         }
         exclusiveContent {
@@ -46,6 +47,17 @@ pluginManagement {
                 includeGroupAndSubgroups('net.neoforged')
             }
         }
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = 'ParchmentMC'
+                    url = 'https://maven.parchmentmc.org'
+                }
+            }
+            filter {
+                includeGroupAndSubgroups('org.parchmentmc')
+            }
+        }
         maven {
             name = 'Stonecutter'
             url = uri('https://maven.kikugie.dev/releases')
@@ -60,20 +72,22 @@ plugins {
 
 rootProject.name = 'forge-autofish'
 
-stonecutter {
-    create(rootProject) {
-        kotlinController = false
-        centralScript = "build.gradle"
-        vcsVersion = "26.2"
+stonecutter.create(rootProject) {
+    kotlinController = false
+    centralScript = "build.gradle"
+    versions("26.2", "26.1.2", "1.21.11")
+    vcsVersion = "26.2"
 
-        branch("fabric") {
-            version("26.2")
-        }
-        branch("forge") {
-            version("26.2")
-        }
-        branch("neoforge") {
-            version("26.2")
-        }
+    branch("fabric") {
+        versions("26.2", "26.1.2")
+    }
+    branch("fabric-o") {
+        versions("1.21.11")
+    }
+    branch("forge") {
+        versions("26.2", "26.1.2", "1.21.11")
+    }
+    branch("neoforge") {
+        versions("26.2", "26.1.2", "1.21.11")
     }
 }

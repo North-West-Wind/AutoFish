@@ -4,7 +4,10 @@ import com.google.common.collect.Lists;
 import in.northwestw.autofish.AutoFish;
 import in.northwestw.autofish.config.Config;
 import net.minecraft.client.Minecraft;
+//? if >=26.1 {
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+ //?} else
+//import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -18,7 +21,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 
-import java.awt.*;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -85,7 +87,7 @@ public class SuperFilterScreen extends Screen {
                 return matchmod && matchtag && matcharg;
             }).collect(Collectors.toList());
             maxPage = (int) Math.ceil(original.size() / (double) max);
-            if (page > maxPage - 1) page = maxPage - 1;
+            if (page > maxPage - 1) page = Math.max(0, maxPage - 1);
         });
         addRenderableWidget(search);
         Button add = new Button.Builder(AutoFish.getTranslatableComponent("gui.superfilterscreen.openfilter"), button -> Minecraft.getInstance().setScreenAndShow(new FilterSelectionScreen(this))).pos(this.width / 2 - 75, 60).size(72, 20).build();
@@ -101,9 +103,15 @@ public class SuperFilterScreen extends Screen {
     }
 
     @Override
+    //? if >=26.1 {
     public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.extractRenderState(graphics, mouseX, mouseY, partialTicks);
         graphics.centeredText(this.font, this.title, this.width / 2, 20, -1);
+    //? } else {
+    /*public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        super.render(graphics, mouseX, mouseY, partialTicks);
+        graphics.drawCenteredString(this.font, this.title, this.width / 2, 20, -1);
+    *///? }
         Item[] items = searching.toArray(new Item[0]);
         for (int i = page * max; i < Math.min((page + 1) * max, searching.size()); i++) {
             Item item = items[i];
@@ -111,11 +119,19 @@ public class SuperFilterScreen extends Screen {
             int k = (i % max) % (max / 3);
             ItemStack stack = ItemStack.EMPTY;
             if (item != null) stack = new ItemStack(item);
+            //? if >=26.1 {
             if (!stack.isEmpty()) graphics.item(stack, (reducedWidth * h / 3) + 15, (reducedHeight * k / (max / 3)) + 90);
-            graphics.text(this.font, stack.getDisplayName().getString(), ((reducedWidth * h / 3) + 45), ((reducedHeight * k / (max / 3)) + 95), Color.WHITE.getRGB());
+            graphics.text(this.font, stack.getDisplayName().getString(), ((reducedWidth * h / 3) + 45), ((reducedHeight * k / (max / 3)) + 95), 0xFFFFFFFF);
+            //? } else {
+            /*if (!stack.isEmpty()) graphics.renderItem(stack, (reducedWidth * h / 3) + 15, (reducedHeight * k / (max / 3)) + 90);
+            graphics.drawString(this.font, stack.getDisplayName().getString(), ((reducedWidth * h / 3) + 45), ((reducedHeight * k / (max / 3)) + 95), 0xFFFFFFFF);
+            *///? }
             //this.font.draw(graphics, stack.getDisplayName().getString(), (float) ((reducedWidth * h / 3) + 45), (float) ((reducedHeight * k / (max / 3)) + 95), Color.WHITE.getRGB());
         }
+        //? if >=26.1 {
         search.extractRenderState(graphics, mouseX, mouseY, partialTicks);
+        //? } else
+        //search.render(graphics, mouseX, mouseY, partialTicks);
     }
 
     @Override
