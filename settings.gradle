@@ -35,17 +35,45 @@ pluginManagement {
                 includeGroupAndSubgroups('net.minecraftforge')
             }
         }
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = 'NeoForge'
+                    url = uri('https://maven.neoforged.net/releases')
+                }
+            }
+            filter {
+                includeGroupAndSubgroups('net.neoforged')
+            }
+        }
+        maven {
+            name = 'Stonecutter'
+            url = uri('https://maven.kikugie.dev/releases')
+        }
     }
 }
 
 plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+    id 'dev.kikugie.stonecutter' version '0.9.6'
 }
 
-// This should match the folder name of the project, or else IDEA may complain (see https://youtrack.jetbrains.com/issue/IDEA-317606)
 rootProject.name = 'forge-autofish'
-includeBuild('build-logic')
-include('common')
-include('fabric')
-include('neoforge')
-include('forge')
+
+stonecutter {
+    create(rootProject) {
+        kotlinController = false
+        centralScript = "build.gradle"
+        vcsVersion = "26.2"
+
+        branch("fabric") {
+            version("26.2")
+        }
+        branch("forge") {
+            version("26.2")
+        }
+        branch("neoforge") {
+            version("26.2")
+        }
+    }
+}

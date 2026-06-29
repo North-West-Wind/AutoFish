@@ -37,7 +37,7 @@ public class AutoFishHandler {
         LocalPlayer player = minecraft.player;
         if (KeyBinds.autofish.consumeClick()) {
             Config.setAutoFish(!Config.autoFish);
-            if (player != null) player.sendOverlayMessage(getText("forgeautofish", Config.autoFish));
+            if (player != null) player.sendOverlayMessage(getText("autofish", Config.autoFish));
         } else if (KeyBinds.rodprotect.consumeClick()) {
             Config.setRodProtect(!Config.rodProtect);
             if (player != null) player.sendOverlayMessage(getText("rodprotect", Config.rodProtect));
@@ -65,7 +65,6 @@ public class AutoFishHandler {
         if (afterDrop) {
             if (tick == 0 && rodSlot != -1) {
                 player.getInventory().setSelectedSlot(rodSlot);
-                AutoFish.LOGGER.info("Swapped to hotbar slot {} for rod", rodSlot);
                 rodSlot = -1;
             }
             tick++;
@@ -197,7 +196,6 @@ public class AutoFishHandler {
         for (int ii = 0; ii < 9; ii++) {
             if (!player.getInventory().getItem(ii).getItem().equals(item)) continue;
             player.getInventory().setSelectedSlot(ii);
-            AutoFish.LOGGER.info("Swapped to hotbar slot {} for item", ii);
             dropCd = 20;
             return;
         }
