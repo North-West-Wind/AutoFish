@@ -3,7 +3,6 @@ plugins {
     id("net.minecraftforge.gradle") version "[7.0.17,8)"
     kotlin("jvm") version "2.2.0"
     id("com.google.devtools.ksp") version "2.2.0-2.0.2"
-    id("dev.kikugie.fletching-table") version "0.1.0-alpha.22"
 }
 
 minecraft {
