@@ -1,57 +1,6 @@
 plugins {
-    id 'java'
-    id 'idea'
-    id 'eclipse'
-    id 'net.minecraftforge.gradle' version '[7.0.17,8)'
-}
-
-version = mod_version
-group = 'ml.northwestwind.forgeautofish'
-
-base {
-    archivesName = "$mod_id-forge-$mc_version"
-}
-
-java.toolchain.languageVersion = JavaLanguageVersion.of(25)
-
-println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
-minecraft {
-    runs {
-        configureEach {
-            workingDir = layout.projectDirectory.dir('run')
-
-            systemProperty 'eventbus.api.strictRuntimeChecks', 'true'
-            systemProperty 'forge.enabledGameTestNamespaces', 'forgeautofish'
-        }
-
-        register('client')
-
-        register('server') {
-            args '--nogui'
-        }
-
-        register('gameTestServer')
-
-        data {
-            workingDir = layout.projectDirectory.dir('run-data')
-
-            args '--mod', "forgeautofish", '--all', '--output', layout.projectDirectory.dir('src/generated/resources'), '--existing', layout.projectDirectory.dir('src/main/resources')
-        }
-    }
-}
-
-repositories {
-    minecraft.mavenizer(it) // In Kotlin, it = this
-    maven fg.forgeMaven
-    maven fg.minecraftLibsMaven
-    mavenCentral()
-}
-
-dependencies {
-    implementation minecraft.dependency("net.minecraftforge:forge:${mc_version}-${forge_version}")
-    annotationProcessor 'net.minecraftforge:eventbus-validator:7.0.1'
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+    // see https://maven.fabricmc.net/fabric-loom/fabric-loom.gradle.plugin/maven-metadata.xml for new versions
+    id 'net.fabricmc.fabric-loom' version '1.16.3' apply false
+    // see https://projects.neoforged.net/neoforged/moddevgradle for new versions
+    id 'net.neoforged.moddev' version '2.0.141' apply false
 }

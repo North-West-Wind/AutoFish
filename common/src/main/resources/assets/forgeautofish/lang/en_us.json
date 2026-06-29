@@ -1,0 +1,51 @@
+{
+  "key.autofish.autofish": "Toggle AutoFish",
+  "key.autofish.rodprotect": "Toggle Fishing Rod Protection",
+  "key.autofish.autoreplace": "Toggle Auto Replace",
+  "key.autofish.settings": "Open Settings",
+  "key.autofish.itemfilter": "Toggle Item Filter",
+  "key.categories.autofish": "AutoFish for Forge",
+
+  "toggle.autofish": "%s AutoFish",
+  "toggle.rodprotect": "%s Fishing Rod Protection",
+  "toggle.autoreplace": "%s Auto Replace",
+  "toggle.itemfilter": "%s Item Filter",
+
+  "warning.autoreplace": "Auto Replace Coming Soon",
+
+  "gui.autofish": "AutoFish Configuration",
+  "gui.autofish.reelindelay": "Reel-In Delay",
+  "gui.autofish.recastdelay": "Recast Delay",
+  "gui.autofish.throwdelay": "Throw Delay",
+  "gui.autofish.checkinterval": "Check Interval",
+  "gui.autofish.filter": "Item Filter",
+  "gui.autofish.done": "Done",
+
+  "gui.setreelindelay": "Set Reel-In Delay",
+  "gui.setreelindelay.reelindelay": "Reel-In Delay",
+  "gui.setreelindelay.save": "Save Reel-In Delay",
+
+  "gui.setrecastdelay": "Set Recast Delay",
+  "gui.setrecastdelay.recastdelay": "Recast Delay",
+  "gui.setrecastdelay.save": "Save Recast Delay",
+
+  "gui.setthrowdelay": "Set Throw Delay",
+  "gui.setthrowdelay.throwdelay": "Throw Delay",
+  "gui.setthrowdelay.save": "Save Throw Delay",
+
+  "gui.setcheckinterval": "Set Check Interval",
+  "gui.setcheckinterval.checkinterval": "Check Interval",
+  "gui.setcheckinterval.save": "Save Check Interval",
+
+  "gui.superfilterscreen": "Super Item Filter",
+  "gui.superfilterscreen.openfilter": "Config",
+  "gui.superfilterscreen.search": "Search",
+  "gui.superfilterscreen.done": "Done",
+
+  "gui.filterselection": "Item Filter Configuration",
+  "gui.filterselection.save": "Save",
+  "gui.filterselection.cancel": "Cancel",
+
+  "toggle.enable.true": "Enabled",
+  "toggle.enable.false": "Disabled"
+}

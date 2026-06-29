@@ -1,0 +1,41 @@
+{
+  "key.autofish.autofish": "切換 自動釣魚",
+  "key.autofish.rodprotect": "切換 釣竿保護",
+  "key.autofish.autoreplace": "切換 自動取代",
+  "key.autofish.settings": "開啟設定",
+  "key.autofish.itemfilter": "切換 物品過濾",
+  "key.categories.autofish": "自動釣魚",
+
+  "toggle.autofish": "%s 自動釣魚",
+  "toggle.rodprotect": "%s 釣竿保護",
+  "toggle.autoreplace": "%s 自動取代",
+  "toggle.itemfilter": "%s 物品過濾",
+
+  "warning.autoreplace": "自動過濾 即將來臨",
+
+  "gui.autofish": "自動釣魚設定",
+  "gui.autofish.reelindelay": "收竿延遲",
+  "gui.autofish.recastdelay": "投竿延遲",
+  "gui.autofish.filter": "物品過濾",
+  "gui.autofish.done": "完成",
+
+  "gui.setrecastdelay": "投竿延遲設定",
+  "gui.setrecastdelay.recastdelay": "投竿延遲",
+  "gui.setrecastdelay.save": "儲存",
+
+  "gui.superfilterscreen": "超級物品過濾器",
+  "gui.superfilterscreen.openfilter": "設定",
+  "gui.superfilterscreen.search": "搜尋",
+  "gui.superfilterscreen.done": "完成",
+
+  "gui.filterselection": "物品過濾設定",
+  "gui.filterselection.save": "儲存",
+  "gui.filterselection.cancel": "取消",
+
+  "gui.setreelindelay": "收竿延遲設定",
+  "gui.setreelindelay.reelindelay": "收竿延遲",
+  "gui.setreelindelay.save": "儲存",
+
+  "toggle.enable.true": "開啟",
+  "toggle.enable.false": "關閉"
+}
