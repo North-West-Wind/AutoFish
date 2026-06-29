@@ -4,14 +4,14 @@ plugins {
     id 'net.neoforged.moddev' version '2.0.141'
 }
 
-ext.loaderName = "neoforge"
+loader = "neoforge"
 
 apply from: rootProject.file('gradle/shared.gradle')
 
 neoForge {
     version = neoforge_version
 
-    def at = rootProject.file("src/${loaderName}/resources/META-INF/accesstransformer.cfg")
+    def at = rootProject.file("src/${loader}/resources/META-INF/accesstransformer.cfg")
     if (at.exists()) {
         accessTransformers.from(at.absolutePath)
     }
@@ -28,7 +28,7 @@ neoForge {
         data {
             clientData()
             gameDirectory = rootProject.file('runs/data')
-            programArguments.addAll '--mod', project.mod_id, '--all', '--output', rootProject.file("src/${loaderName}/generated/resources").getAbsolutePath(), '--existing', rootProject.file("src/${loaderName}/resources").getAbsolutePath()
+            programArguments.addAll '--mod', project.mod_id, '--all', '--output', rootProject.file("src/${loader}/generated/resources").getAbsolutePath(), '--existing', rootProject.file("src/${loader}/resources").getAbsolutePath()
         }
         server {
             server()
@@ -44,4 +44,4 @@ neoForge {
     }
 }
 
-sourceSets.main.resources.srcDir rootProject.file("src/${loaderName}/generated/resources")
+sourceSets.main.resources.srcDir rootProject.file("src/${loader}/generated/resources")

@@ -4,12 +4,12 @@ plugins {
     id 'fabric-loom' version '1.13-SNAPSHOT'
 }
 
-ext.loaderName = "fabric-o"
+loader = "fabric"
 
 apply from: rootProject.file('gradle/shared.gradle')
 
 loom {
-    def aw = rootProject.file("src/fabric/resources/${mod_id}.accesswidener")
+    def aw = rootProject.file("src/${loader}/resources/${mod_id}.accesswidener")
     if (aw.exists()) {
         accessWidenerPath.set(aw)
     }

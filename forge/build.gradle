@@ -5,14 +5,14 @@ plugins {
     id 'idea'
 }
 
-ext.loaderName = "forge"
+loader = "forge"
 
 apply from: rootProject.file('gradle/shared.gradle')
 
 minecraft {
     mappings channel: 'official', version: minecraft_version
 
-    def at = rootProject.file("src/${loaderName}/resources/META-INF/accesstransformer.cfg")
+    def at = rootProject.file("src/${loader}/resources/META-INF/accesstransformer.cfg")
     if (at.exists()) {
         accessTransformer = at
     }
@@ -38,7 +38,7 @@ minecraft {
 
         register('data') {
             workingDir = rootProject.file('runs/data')
-            args '--mod', mod_id, '--all', '--output', rootProject.file("src/${loaderName}/generated/resources"), '--existing', rootProject.file("src/${loaderName}/resources")
+            args '--mod', mod_id, '--all', '--output', rootProject.file("src/${loader}/generated/resources"), '--existing', rootProject.file("src/${loader}/resources")
         }
     }
 }
@@ -49,7 +49,7 @@ repositories {
     maven fg.minecraftLibsMaven
 }
 
-sourceSets.main.resources.srcDir rootProject.file("src/${loaderName}/generated/resources")
+sourceSets.main.resources.srcDir rootProject.file("src/${loader}/generated/resources")
 
 dependencies {
     implementation(minecraft.dependency("net.minecraftforge:forge:${minecraft_version}-${forge_version}"))
