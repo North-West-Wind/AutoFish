@@ -17,8 +17,8 @@ dependencies {
         })
     }
 
-    implementation("net.fabricmc:fabric-loader:${commonMod.dep("fabric_loader")}")
-    implementation("net.fabricmc.fabric-api:fabric-api:${commonMod.dep("fabric_api")}+${commonMod.mc}")
+    modImplementation("net.fabricmc:fabric-loader:${commonMod.dep("fabric_loader")}")
+    modApi("net.fabricmc.fabric-api:fabric-api:${commonMod.dep("fabric_api")}+${commonMod.mc}")
 }
 
 loom {
