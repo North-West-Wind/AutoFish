@@ -3,7 +3,6 @@ name: Publish
 on:
   release:
     types: [published]
-  workflow_dispatch:
 
 concurrency:
   group: publish-${{ github.ref }}
@@ -56,15 +55,6 @@ jobs:
         id: gradle-properties
         run: bash ./.github/scripts/parse-gradle-properties.sh ${{ matrix.version }}
 
-      - name: "Fetch release changelog"
-        id: release
-        run: |
-          gh release view "${{ github.ref_name }}" --json body,isPrerelease > /tmp/release.json
-          echo "prerelease=$(jq -r '.isPrerelease' /tmp/release.json)" >> "$GITHUB_OUTPUT"
-          jq -r '.body' /tmp/release.json > /tmp/changelog.md
-        env:
-          GH_TOKEN: ${{ github.token }}
-
       - uses: Kir-Antipov/mc-publish@v3.3
         with:
           modrinth-id: ${{ vars.MODRINTH_ID }}
@@ -78,7 +68,7 @@ jobs:
             >=${{ steps.gradle-properties.outputs.MIN_MINECRAFT_VERSION }} <=${{ steps.gradle-properties.outputs.MINECRAFT_VERSION }}
           version: ${{ steps.gradle-properties.outputs.MOD_VERSION }}-${{ matrix.version }}-${{ matrix.loader }}
           name: ${{ steps.gradle-properties.outputs.MOD_NAME }} ${{ steps.gradle-properties.outputs.MOD_VERSION }} (${{ matrix.version }}-${{ matrix.loader }})
-          version-type: ${{ steps.release.outputs.prerelease == 'true' && 'beta' || 'release' }}
-          changelog-file: /tmp/changelog.md
+          version-type: ${{ github.event.release.prerelease && 'beta' || 'release' }}
+          changelog: ${{ github.event.release.body || '' }}
           retry-attempts: 6
           retry-delay: 30000
