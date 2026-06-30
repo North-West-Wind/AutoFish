@@ -24,6 +24,8 @@ dependencies {
             }
         })
     }
+
+    modCompileOnly("net.fabricmc:fabric-loader:${commonMod.dep("fabric_loader")}")
 }
 
 val commonJava: Configuration by configurations.creating {

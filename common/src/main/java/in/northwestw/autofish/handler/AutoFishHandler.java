@@ -188,7 +188,10 @@ public class AutoFishHandler {
             //? } else
             //List<ItemStack> items = player.getInventory().items;
             for (String name : Config.filter) {
+                //? if >=1.21.1 {
                 Identifier rl = Identifier.parse(name);
+                //? } else
+                //Identifier rl = new Identifier(name);
                 Optional<Item> opt = BuiltInRegistries.ITEM.getOptional(rl);
                 if (opt.isEmpty()) continue;
                 Item item = opt.get();
@@ -210,7 +213,7 @@ public class AutoFishHandler {
 
     private static void dropItem(Player player) {
         if (dropCd != 10 && dropCd != 0) return;
-        Item item = shouldDrop.getFirst();
+        Item item = shouldDrop.get(0);
         if (dropCd == 10) {
             ((LocalPlayer) player).drop(false);
             shouldDrop.remove(item);

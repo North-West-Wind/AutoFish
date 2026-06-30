@@ -35,7 +35,12 @@ public class AutoFishForge {
         }
 
         @SubscribeEvent
+        //? if >=1.21.1 {
         public static void playerTickPre(TickEvent.PlayerTickEvent.Pre event) {
+        //? } else {
+        /*public static void playerTickPre(TickEvent.PlayerTickEvent event) {
+            if (event.phase != TickEvent.Phase.START) return;
+            *///? }
             //? if >=1.21.11 {
             if (event.side() != LogicalSide.CLIENT) return;
             AutoFishHandler.onPlayerTick(event.player());

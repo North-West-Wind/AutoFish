@@ -57,7 +57,14 @@ public class SuperFilterScreen extends Screen {
         reducedHeight = this.height - 90;
         reducedWidth = this.width - 30;
         max = /* (int) Math.round(30 * (reducedWidth / 550.0 + reducedHeight / 330.0) / 2.0) */ 30;
-        original = Config.filter.stream().map(string -> BuiltInRegistries.ITEM.getOptional(Identifier.parse(string))).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
+        original = Config.filter.stream().map(string ->
+                BuiltInRegistries.ITEM.getOptional(
+                        //? if >=1.21.1 {
+                        Identifier.parse(string)
+                        //? } else
+                        //new Identifier(string)
+                )
+        ).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
         maxPage = (int) Math.ceil(original.size() / (double) max);
         searching = original;
         search = new EditBox(this.font, this.width / 2 - 75, 35, 150, 20, AutoFish.getTranslatableComponent("gui.superfilterscreen.search")) {

@@ -2,7 +2,10 @@ package in.northwestw.autofish;
 
 import in.northwestw.autofish.config.Config;
 import net.minecraft.network.chat.MutableComponent;
+//? if >=1.21.1 {
 import net.minecraft.network.chat.contents.PlainTextContents;
+//? } else
+//import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,6 +24,9 @@ public class AutoFish
     }
 
     public static MutableComponent getLiteralComponent(String str) {
+        //? if >=1.21.1 {
         return MutableComponent.create(new PlainTextContents.LiteralContents(str));
+        //? } else
+        //return MutableComponent.create(new LiteralContents(str));
     }
 }

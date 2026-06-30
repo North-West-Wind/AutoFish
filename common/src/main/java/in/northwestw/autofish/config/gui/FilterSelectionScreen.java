@@ -34,7 +34,14 @@ public class FilterSelectionScreen extends Screen {
     private EditBox search;
     private final Collection<Item> original = BuiltInRegistries.ITEM.stream().toList();
     private Collection<Item> searching;
-    private final Set<Item> selected = new HashSet<>(Config.filter.stream().map(string -> BuiltInRegistries.ITEM.getOptional(Identifier.parse(string))).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
+    private final Set<Item> selected = new HashSet<>(Config.filter.stream().map(string ->
+            BuiltInRegistries.ITEM.getOptional(
+                    //? if >=1.21.1 {
+                    Identifier.parse(string)
+                    //? } else
+                    //new Identifier(string)
+            )
+    ).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
     private int page, maxPage = (int) Math.ceil(original.size() / 300.0), max = 300;
     private boolean clickProcessed = true;
     private double clickX, clickY;
