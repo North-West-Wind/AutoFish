@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    //id("idea")
+    //Cid("idea")
     id("java-library")
 }
 
@@ -60,8 +60,8 @@ tasks {
             "modGitHub" to commonMod.github,
             "minecraftVersion" to commonMod.propOrNull("minecraft_version"),
             "minMinecraftVersion" to commonMod.propOrNull("min_minecraft_version"),
-            "fabricLoaderVersion" to commonMod.depOrNull("fabric-loader"),
-            "fabricApiVersion" to commonMod.depOrNull("fabric-api"),
+            "fabricLoaderVersion" to commonMod.depOrNull("fabric_loader"),
+            "fabricApiVersion" to commonMod.depOrNull("fabric_api"),
             "neoForgeVersion" to commonMod.depOrNull("neoforge"),
             "forgeVersion" to commonMod.depOrNull("forge"),
             // "yaclVersion" to commonMod.depOrNull("yacl"),
