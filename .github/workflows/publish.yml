@@ -21,7 +21,7 @@ jobs:
           fetch-depth: 0
 
       - id: set-matrix
-        run: ./.github/scripts/generate-publish-matrix.sh
+        run: bash ./.github/scripts/generate-publish-matrix.sh
 
   publish:
     needs: generate-publish-matrix
@@ -54,7 +54,7 @@ jobs:
 
       - name: "Parse gradle properties"
         id: gradle-properties
-        run: ./.github/scripts/parse-gradle-properties.sh ${{ matrix.version }}
+        run: bash ./.github/scripts/parse-gradle-properties.sh ${{ matrix.version }}
 
       - uses: Kir-Antipov/mc-publish@v3.3
         with:
@@ -64,8 +64,7 @@ jobs:
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           files: |
             ${{ matrix.loader }}/versions/${{ matrix.version }}/build/libs/*.jar
-          loaders: |
-            ${{ matrix.supported_loaders }}
+          loaders: ${{ join(matrix.supported_loaders, ' ') }}
           game-versions: |
             >=${{ steps.gradle-properties.outputs.MIN_MINECRAFT_VERSION }} <=${{ steps.gradle-properties.outputs.MINECRAFT_VERSION }}
           version: ${{ steps.gradle-properties.outputs.MOD_VERSION }}-${{ matrix.version }}-${{ matrix.loader }}
