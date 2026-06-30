@@ -17,7 +17,12 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 //? }
+//? if >=1.18.2 {
 import net.minecraft.core.HolderSet;
+//? } else {
+/*import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.Tag;
+*///? }
 //? if >=1.19.4 {
 import net.minecraft.core.registries.BuiltInRegistries;
 //? } else
@@ -93,8 +98,13 @@ public class FilterSelectionScreen extends Screen {
             List<HolderSet.Named<Item>> itemTags = BuiltInRegistries.ITEM.getTags().filter(tag -> tags.stream().anyMatch(t -> tag.key().location().getPath().contains(t))).toList();
              //? } elif >=1.19.4 {
             //List<HolderSet.Named<Item>> itemTags = BuiltInRegistries.ITEM.getTags().map(Pair::getSecond).filter(tag -> tags.stream().anyMatch(t -> tag.key().location().getPath().contains(t))).toList();
-            //? } else
+            //? } elif >=1.18.2 {
             //List<HolderSet.Named<Item>> itemTags = Registry.ITEM.getTags().map(Pair::getSecond).filter(tag -> tags.stream().anyMatch(t -> tag.key().location().getPath().contains(t))).toList();
+            //? } else {
+            /*List<Tag<Item>> itemTags = ItemTags.getAllTags().getAllTags().entrySet().stream()
+                    .filter(entry -> tags.stream().anyMatch(t -> entry.getKey().toString().contains(t)))
+                    .map(Map.Entry::getValue).toList();
+            *///? }
             searching = original.stream().filter(item -> {
                 //? if >=1.21.11 {
                 Optional<ResourceKey<Item>> opt = BuiltInRegistries.ITEM.getResourceKey(item);
@@ -112,8 +122,11 @@ public class FilterSelectionScreen extends Screen {
                 boolean matchmod = mods.isEmpty(), matchtag = tags.isEmpty(), matcharg = false;
                 for (String mod : mods)
                     matchmod = matchmod || rl.getNamespace().toLowerCase().contains(mod);
+                //? if >=1.18.2 {
                 for (HolderSet.Named<Item> itemTag : itemTags)
                     matchtag = matchtag || itemTag.stream().anyMatch(tagItem -> tagItem.value() == item);
+                //? } else
+                //matchtag = matchtag || itemTags.stream().anyMatch(tag -> tag.contains(item));
                 for (String arg : paths)
                     matcharg = matcharg || rl.getPath().contains(arg);
                 return matchmod && matchtag && matcharg;

@@ -5,8 +5,11 @@ import in.northwestw.autofish.keybind.KeyBinds;
 import net.minecraftforge.client.event.InputEvent;
 //? if >=1.19.2 {
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-//? } else {
+//? } elif >=1.18.2 {
 /*import net.minecraftforge.client.ClientRegistry;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+*///? } else {
+/*import net.minecraftforge.fmlclient.registry.ClientRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 *///? }
 import net.minecraftforge.event.TickEvent;

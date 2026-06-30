@@ -18,7 +18,11 @@ dependencies {
     }
 
     modImplementation("net.fabricmc:fabric-loader:${commonMod.dep("fabric_loader")}")
-    modApi("net.fabricmc.fabric-api:fabric-api:${commonMod.dep("fabric_api")}+${commonMod.mc}")
+    if (commonMod.dep("fabric_api").contains("+")) {
+        modApi("net.fabricmc.fabric-api:fabric-api:${commonMod.dep("fabric_api")}")
+    } else {
+        modApi("net.fabricmc.fabric-api:fabric-api:${commonMod.dep("fabric_api")}+${commonMod.mc}")
+    }
 
     commonMod.depOrNull("modmenu")?.let { modMenuVersion ->
         modImplementation("com.terraformersmc:modmenu:${modMenuVersion}")
