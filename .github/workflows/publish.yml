@@ -1,0 +1,96 @@
+name: Publish
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  generate-publish-matrix:
+    runs-on: ubuntu-latest
+    name: Generate Publish Matrix
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: set-matrix
+        run: |
+          platforms=$(awk -F= '/stonecutter_enabled_platforms/{print $2}' gradle.properties | tr -d ' ')
+          matrix_content="["
+          for platform in $(echo $platforms | tr ',' ' '); do
+            versions=$(awk -F= '/stonecutter_enabled_'$platform'_versions/{print $2}' gradle.properties | tr -d ' ')
+            if [[ "$platform" == "fabric" ]]; then
+              supported_loaders="\"fabric\",\"quilt\""
+            else
+              supported_loaders="\"$platform\""
+            fi
+            for version in $(echo $versions | tr ',' ' '); do
+              matrix_content+="{\"loader\":\"$platform\",\"version\":\"$version\",\"supported_loaders\":\"$supported_loaders\"},"
+            done
+          done
+          echo "matrix=${matrix_content%,}]" >> "$GITHUB_OUTPUT"
+
+  build:
+    runs-on: ubuntu-latest
+    name: Build Artifacts
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: xxanqw/compilation@v3
+        with:
+          java-version: "25"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mod-artifacts
+          path: ./**/versions/**/build/libs
+          if-no-files-found: error
+
+  publish:
+    needs: [generate-publish-matrix, build]
+    runs-on: ubuntu-latest
+    name: Publish ${{ matrix.loader }} ${{ matrix.version }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.generate-publish-matrix.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: mod-artifacts
+
+      - id: mod-info
+        run: |
+          echo "version=$(awk -F= '/mod.version/{print $2}' gradle.properties)" >> "$GITHUB_OUTPUT"
+          echo "name=$(awk -F= '/mod.name/{print $2}' gradle.properties)" >> "$GITHUB_OUTPUT"
+
+      - uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          modrinth-id: ${{ vars.MODRINTH_ID }}
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge-id: ${{ vars.CURSEFORGE_ID }}
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          files: |
+            ${{ matrix.loader }}/versions/${{ matrix.version }}/build/libs/*.jar
+          loaders: |
+            ${{ matrix.supported_loaders }}
+          game-versions: |
+            ${{ matrix.version }}
+          version: ${{ steps.mod-info.outputs.version }}
+          name: ${{ steps.mod-info.outputs.name }} ${{ steps.mod-info.outputs.version }}
+          version-type: ${{ github.event.release.prerelease && 'beta' || 'release' }}
+          changelog: ${{ github.event.release.body || '' }}
+          retry-attempts: 6
+          retry-delay: 30000
