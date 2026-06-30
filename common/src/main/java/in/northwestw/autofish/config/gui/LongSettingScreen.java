@@ -4,8 +4,10 @@ import in.northwestw.autofish.AutoFish;
 import net.minecraft.client.Minecraft;
 //? if >=26.1 {
 import net.minecraft.client.gui.GuiGraphicsExtractor;
- //?} else
+ //?} elif >=1.20.1 {
 //import net.minecraft.client.gui.GuiGraphics;
+//? } else
+//import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -55,7 +57,7 @@ public class LongSettingScreen extends Screen {
         };
         editBox.setValue(Long.toString(this.supplier.get()));
         addRenderableWidget(editBox);
-        Button save = new Button.Builder(AutoFish.getTranslatableComponent("gui." + this.middleTranslationKey + ".save"), button -> {
+        Button save = ScreenHelper.makeButton(this.width / 2 - 75, this.height / 2, 150, 20, AutoFish.getTranslatableComponent("gui." + this.middleTranslationKey + ".save"), button -> {
             if (!isNumeric(editBox.getValue())) editBox.setValue(Long.toString(this.supplier.get()));
             else {
                 long delay = Long.parseLong(editBox.getValue());
@@ -65,7 +67,7 @@ public class LongSettingScreen extends Screen {
                     ScreenHelper.showScreen(parent);
                 }
             }
-        }).pos(this.width / 2 - 75, this.height / 2).size(150, 20).build();
+        });
         addRenderableWidget(save);
     }
 
@@ -89,12 +91,20 @@ public class LongSettingScreen extends Screen {
         super.extractRenderState(graphics, mouseX, mouseY, partialTicks);
         graphics.centeredText(this.font, this.title, this.width / 2, 20, -1);
         this.editBox.extractRenderState(graphics, mouseX, mouseY, partialTicks);
-    }//?} else {
+    }
+    //? } elif >=1.20.1 {
     /*public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         super.render(graphics, mouseX, mouseY, partialTicks);
         graphics.drawCenteredString(this.font, this.title, this.width / 2, 20, -1);
         this.editBox.render(graphics, mouseX, mouseY, partialTicks);
-    }*///?}
+    }
+    *///? } else {
+    /*public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+        super.render(poseStack, mouseX, mouseY, partialTicks);
+        drawCenteredString(poseStack, this.font, this.title, this.width / 2, 20, -1);
+        this.editBox.render(poseStack, mouseX, mouseY, partialTicks);
+    }
+    *///? }
 
     @Override
     public boolean shouldCloseOnEsc() {

@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class Config {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -72,7 +73,7 @@ public class Config {
                 if (json.has("all_filters"))
                     allFilters = json.get("all_filters").getAsBoolean();
                 if (json.has("filter"))
-                    filter = json.getAsJsonArray("filter").asList().stream().map(JsonElement::getAsString).toList();
+                    filter = Stream.of(json.getAsJsonArray("filter")).map(JsonElement::getAsString).toList();
 
                 // validate
                 if (recastDelay < RECAST_DELAY_RANGE[0] || recastDelay > RECAST_DELAY_RANGE[1]) {

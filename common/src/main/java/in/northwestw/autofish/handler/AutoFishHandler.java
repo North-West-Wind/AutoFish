@@ -11,8 +11,10 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.Holder;
+//? if >=1.19.4 {
 import net.minecraft.core.registries.BuiltInRegistries;
+//? } else
+//import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
@@ -20,6 +22,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.FishingRodItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
@@ -115,7 +118,11 @@ public class AutoFishHandler {
         double x = vector.x();
         double y = vector.y();
         double z = vector.z();
-        if (y < -0.075 && !player.level().getFluidState(player.fishing.blockPosition()).isEmpty() && x == 0 && z == 0)
+        //? if >=1.20.1 {
+        Level level = player.level();
+        //? } else
+        //Level level = player.level;
+        if (y < -0.075 && !level.getFluidState(player.fishing.blockPosition()).isEmpty() && x == 0 && z == 0)
             pendingReelIn = true;
     }
 
@@ -128,7 +135,10 @@ public class AutoFishHandler {
         //? } else
         //List<ItemStack> items = player.getInventory().items;
         items.forEach(stack -> {
+            //? if >=1.19.4 {
             Identifier rl = BuiltInRegistries.ITEM.getKey(stack.getItem());
+            //? } else
+            //Identifier rl = Registry.ITEM.getKey(stack.getItem());
             //? if >=26.1 {
             itemsBeforeFished.put(rl, itemsBeforeFished.getOrDefault(rl, 0) + stack.count());
             //? } else
@@ -192,7 +202,10 @@ public class AutoFishHandler {
                 Identifier rl = Identifier.parse(name);
                 //? } else
                 //Identifier rl = new Identifier(name);
+                //? if >=1.19.4 {
                 Optional<Item> opt = BuiltInRegistries.ITEM.getOptional(rl);
+                //? } else
+                //Optional<Item> opt = Registry.ITEM.getOptional(rl);
                 if (opt.isEmpty()) continue;
                 Item item = opt.get();
                 int newCount = items.stream().filter(stack -> stack.getItem().toString().equals(rl.toString())).mapToInt(ItemStack::getCount).reduce(Integer::sum).orElse(0);

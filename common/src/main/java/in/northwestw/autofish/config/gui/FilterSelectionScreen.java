@@ -4,11 +4,12 @@ import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import in.northwestw.autofish.AutoFish;
 import in.northwestw.autofish.config.Config;
-import net.minecraft.client.Minecraft;
 //? if >=26.1 {
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-//?} else
+//?} elif >=1.20.1 {
 //import net.minecraft.client.gui.GuiGraphics;
+//? } else
+//import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -17,7 +18,10 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 //? }
 import net.minecraft.core.HolderSet;
+//? if >=1.19.4 {
 import net.minecraft.core.registries.BuiltInRegistries;
+//? } else
+//import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
@@ -32,15 +36,18 @@ import java.util.stream.Stream;
 public class FilterSelectionScreen extends Screen {
     private final Screen parent;
     private EditBox search;
+    //? if >=1.19.4 {
     private final Collection<Item> original = BuiltInRegistries.ITEM.stream().toList();
+    //? } else
+    //private final Collection<Item> original = Registry.ITEM.stream().toList();
     private Collection<Item> searching;
     private final Set<Item> selected = new HashSet<>(Config.filter.stream().map(string ->
-            BuiltInRegistries.ITEM.getOptional(
-                    //? if >=1.21.1 {
-                    Identifier.parse(string)
-                    //? } else
-                    //new Identifier(string)
-            )
+            //? if >=1.21.1 {
+            BuiltInRegistries.ITEM.getOptional(Identifier.parse(string))
+            //? } elif >=1.19.4 {
+            //BuiltInRegistries.ITEM.getOptional(new Identifier(string))
+            //? } else
+            //Optional.of(Registry.ITEM.get(new Identifier(string)))
     ).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
     private int page, maxPage = (int) Math.ceil(original.size() / 300.0), max = 300;
     private boolean clickProcessed = true;
@@ -85,15 +92,24 @@ public class FilterSelectionScreen extends Screen {
             }
             //? if >=1.21.11 {
             List<HolderSet.Named<Item>> itemTags = BuiltInRegistries.ITEM.getTags().filter(tag -> tags.stream().anyMatch(t -> tag.key().location().getPath().contains(t))).toList();
-            //? } else
+             //? } elif >=1.19.4 {
             //List<HolderSet.Named<Item>> itemTags = BuiltInRegistries.ITEM.getTags().map(Pair::getSecond).filter(tag -> tags.stream().anyMatch(t -> tag.key().location().getPath().contains(t))).toList();
+            //? } else
+            //List<HolderSet.Named<Item>> itemTags = Registry.ITEM.getTags().map(Pair::getSecond).filter(tag -> tags.stream().anyMatch(t -> tag.key().location().getPath().contains(t))).toList();
             searching = original.stream().filter(item -> {
+                //? if >=1.21.11 {
                 Optional<ResourceKey<Item>> opt = BuiltInRegistries.ITEM.getResourceKey(item);
                 if (opt.isEmpty()) return false;
-                //? if >=1.21.11 {
                 Identifier rl = opt.get().identifier();
-                //? } else
-                //Identifier rl = opt.get().location();
+                //? } elif >=1.19.4 {
+                /*Optional<ResourceKey<Item>> opt = BuiltInRegistries.ITEM.getResourceKey(item);
+                if (opt.isEmpty()) return false;
+                Identifier rl = opt.get().location();
+                *///? } else {
+                /*Optional<ResourceKey<Item>> opt = Registry.ITEM.getResourceKey(item);
+                if (opt.isEmpty()) return false;
+                Identifier rl = opt.get().location();
+                *///? }
                 boolean matchmod = mods.isEmpty(), matchtag = tags.isEmpty(), matcharg = false;
                 for (String mod : mods)
                     matchmod = matchmod || rl.getNamespace().toLowerCase().contains(mod);
@@ -107,18 +123,21 @@ public class FilterSelectionScreen extends Screen {
             if (page > maxPage - 1) page = Math.max(0, maxPage - 1);
         });
         addRenderableWidget(search);
-        Button add = new Button.Builder(AutoFish.getTranslatableComponent("gui.filterselection.save"), button -> {
+        Button add = ScreenHelper.makeButton(this.width / 2 - 75, 60, 72, 20, AutoFish.getTranslatableComponent("gui.filterselection.save"), button -> {
+            //? if >=1.19.4 {
             List<String> items = selected.stream().map(item -> BuiltInRegistries.ITEM.getKey(item).toString()).collect(Collectors.toList());
+            //? } else
+            //List<String> items = selected.stream().map(item -> Registry.ITEM.getKey(item).toString()).collect(Collectors.toList());
             Config.setFilter(items);
             ScreenHelper.showScreen(parent);
-        }).pos(this.width / 2 - 75, 60).size(72, 20).build();
+        });
         addRenderableWidget(add);
-        Button done = new Button.Builder(AutoFish.getTranslatableComponent("gui.filterselection.cancel"), button -> ScreenHelper.showScreen(parent)).pos(this.width / 2 + 3, 60).size(72, 20).build();
+        Button done = ScreenHelper.makeButton(this.width / 2 + 3, 60, 72, 20, AutoFish.getTranslatableComponent("gui.filterselection.cancel"), button -> ScreenHelper.showScreen(parent));
         addRenderableWidget(done);
-        previous = new Button.Builder(AutoFish.getLiteralComponent("<"), button -> { if (page > 0) page--; }).pos(this.width / 2 - 100, 60).size(20, 20).build();
+        previous = ScreenHelper.makeButton(this.width / 2 - 100, 60, 20, 20, AutoFish.getLiteralComponent("<"), button -> { if (page > 0) page--; });
         previous.visible = false;
         addRenderableWidget(previous);
-        next = new Button.Builder(AutoFish.getLiteralComponent(">"), button -> { if (page < maxPage - 1) page++; }).pos(this.width / 2 + 80, 60).size(20, 20).build();
+        next = ScreenHelper.makeButton(this.width / 2 + 80, 60, 20, 20, AutoFish.getLiteralComponent(">"), button -> { if (page < maxPage - 1) page++; });
         next.visible = false;
         addRenderableWidget(next);
     }
@@ -128,19 +147,31 @@ public class FilterSelectionScreen extends Screen {
     public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.extractRenderState(graphics, mouseX, mouseY, partialTicks);
         graphics.centeredText(this.font, this.title, this.width / 2, 20, -1);
-    //?} else {
+    //?} elif >=1.20.1 {
     /*public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         super.render(graphics, mouseX, mouseY, partialTicks);
         graphics.drawCenteredString(this.font, this.title, this.width / 2, 20, -1);
-        *///?}
+    *///?} else {
+    /*public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+        super.render(poseStack, mouseX, mouseY, partialTicks);
+        this.renderBackground(poseStack);
+        drawCenteredString(poseStack, this.font, this.title, this.width / 2, 20, -1);
+    *///? }
         Collection<Item> searchingCopy = Lists.newArrayList();
         Collection<Item> prioritized = searching.stream().filter(item -> {
+            //? if >=1.21.11 {
             Optional<ResourceKey<Item>> opt = BuiltInRegistries.ITEM.getResourceKey(item);
             if (opt.isEmpty()) return false;
-            //? if >=1.21.11 {
             Identifier rl = opt.get().identifier();
-            //? } else
-            //Identifier rl = opt.get().location();
+            //? } elif >=1.19.4 {
+            /*Optional<ResourceKey<Item>> opt = BuiltInRegistries.ITEM.getResourceKey(item);
+            if (opt.isEmpty()) return false;
+            Identifier rl = opt.get().location();
+            *///? } else {
+            /*Optional<ResourceKey<Item>> opt = Registry.ITEM.getResourceKey(item);
+            if (opt.isEmpty()) return false;
+            Identifier rl = opt.get().location();
+            *///? }
             boolean pri = Config.prioritize.contains(rl.toString());
             if (!pri) searchingCopy.add(item);
             return pri;
@@ -157,27 +188,42 @@ public class FilterSelectionScreen extends Screen {
                 if (!stack.isEmpty()) {
                     //? if >=26.1 {
                     graphics.item(stack, x, y);
-                    //? } else
+                    //? } elif >=1.20.1 {
                     //graphics.renderItem(stack, x, y);
+                    //? } elif >=1.19.4 {
+                    //itemRenderer.renderGuiItem(poseStack, stack, x, y);
+                    //? } else
+                    //itemRenderer.renderGuiItem(stack, x, y);
                     if (!clickProcessed && isMouseInRange(clickX, clickY, x, y, x+16, y+16)) {
                         if (selected.contains(item)) selected.remove(item);
                         else selected.add(item);
                         clickProcessed = true;
                     }
+                    //? if >=1.20.1 {
                     if (selected.contains(item)) graphics.fillGradient(x - 2, y - 2, x + 18, y + 18, 0xFF00FF00, 0xFF00FF00);
                     else if (isMouseInRange(mouseX, mouseY, x, y,x + 16, y + 16)) graphics.fillGradient(x - 2, y - 2, x + 18, y + 18, 0xFFC0C0C0, 0xFFC0C0C0);
+                    //? } else {
+                    /*if (selected.contains(item)) fillGradient(poseStack, x - 2, y - 2, x + 18, y + 18, 0xFF00FF00, 0xFF00FF00);
+                    else if (isMouseInRange(mouseX, mouseY, x, y,x + 16, y + 16)) fillGradient(poseStack, x - 2, y - 2, x + 18, y + 18, 0xFFC0C0C0, 0xFFC0C0C0);
+                    *///? }
                     //if (isMouseInRange(mouseX, mouseY, x, y,x + 16, y + 16)) graphics.item(this.font, stack, mouseX, mouseY);
                     //? if >=26.1 {
                     graphics.item(stack, x, y);
-                    //? } else
+                    //? } elif >=1.20.1 {
                     //graphics.renderItem(stack, x, y);
+                    //? } elif >=1.19.4 {
+                    //itemRenderer.renderGuiItem(poseStack, stack, x, y);
+                    //? } else
+                    //itemRenderer.renderGuiItem(stack, x, y);
                 }
             }
         }
         //? if >=26.1 {
         search.extractRenderState(graphics, mouseX, mouseY, partialTicks);
-        //?} else
+        //?} elif >=1.20.1 {
         //search.render(graphics, mouseX, mouseY, partialTicks);
+        //? } else
+        //search.render(poseStack, mouseX, mouseY, partialTicks);
     }
 
     private boolean isMouseInRange(double mouseX, double mouseY, int x1, int y1, int x2, int y2) {
@@ -205,7 +251,11 @@ public class FilterSelectionScreen extends Screen {
     /*public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
             if (!search.isFocused()) ScreenHelper.showScreen(parent);
-            else search.setFocused(false);
+            else
+                //? if >=1.19.4 {
+                search.setFocused(false);
+                //? } else
+                //search.setFocus(false);
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
