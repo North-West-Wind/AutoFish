@@ -34,7 +34,7 @@ val commonResources: Configuration by configurations.creating {
     isCanBeConsumed = true
 }
 
-/*artifacts {
+artifacts {
     afterEvaluate {
         val mainSourceSet = sourceSets.main.get()
         mainSourceSet.java.sourceDirectories.files.forEach {
@@ -44,4 +44,4 @@ val commonResources: Configuration by configurations.creating {
             add(commonResources.name, it)
         }
     }
-}*/
+}

@@ -9,8 +9,10 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
+//? if >=1.21.11 {
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
+//? }
 import org.lwjgl.glfw.GLFW;
 
 import java.util.function.Consumer;
@@ -39,10 +41,17 @@ public class LongSettingScreen extends Screen {
     protected void init() {
         editBox = new EditBox(this.font, this.width / 2 - 75, this.height / 2 - 25, 150, 20, AutoFish.getTranslatableComponent("gui." + this.middleTranslationKey + ".throwdelay")) {
             @Override
-            public boolean mouseClicked(MouseButtonEvent ev, boolean flag) {
+            //? if >=1.21.11 {
+            public boolean mouseClicked(MouseButtonEvent ev, boolean p_430750_) {
                 if (ev.button() == GLFW.GLFW_MOUSE_BUTTON_2) this.setValue("");
-                return super.mouseClicked(ev, flag);
+                return super.mouseClicked(ev, p_430750_);
             }
+            //? } else {
+            /*public boolean mouseClicked(double mouseX, double mouseY, int button) {
+                if (button == GLFW.GLFW_MOUSE_BUTTON_2) this.setValue("");
+                return super.mouseClicked(mouseX, mouseY, button);
+            }
+            *///? }
         };
         editBox.setValue(Long.toString(this.supplier.get()));
         addRenderableWidget(editBox);
@@ -53,7 +62,7 @@ public class LongSettingScreen extends Screen {
                 if (delay < this.min || delay > this.max) editBox.setValue(Long.toString(this.supplier.get()));
                 else {
                     this.consumer.accept(delay);
-                    Minecraft.getInstance().setScreenAndShow(parent);
+                    ScreenHelper.showScreen(parent);
                 }
             }
         }).pos(this.width / 2 - 75, this.height / 2).size(150, 20).build();
@@ -93,10 +102,17 @@ public class LongSettingScreen extends Screen {
     }
 
     @Override
+    //? if >=1.21.11 {
     public boolean keyPressed(KeyEvent ev) {
-        if (ev.key() == GLFW.GLFW_KEY_ESCAPE) Minecraft.getInstance().setScreenAndShow(parent);
+        if (ev.key() == GLFW.GLFW_KEY_ESCAPE) ScreenHelper.showScreen(parent);
         return super.keyPressed(ev);
     }
+    //? } else {
+    /*public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE) ScreenHelper.showScreen(parent);
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+    *///? }
 
     @Override
     public boolean isPauseScreen() {

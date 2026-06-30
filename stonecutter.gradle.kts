@@ -5,3 +5,11 @@ plugins {
     id("net.fabricmc.fabric-loom-remap") version "1.17-SNAPSHOT" apply false
 }
 stonecutter active "26.2"
+
+stonecutter {
+    parameters {
+        replacements.string(current.parsed < "1.21.11") {
+            replace("Identifier", "ResourceLocation")
+        }
+    }
+}

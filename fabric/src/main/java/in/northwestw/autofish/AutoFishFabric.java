@@ -28,9 +28,6 @@ public class AutoFishFabric implements ModInitializer {
         *///? }
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> AutoFishHandler.onKeyInput());
-        //? if >=26.1 {
         ClientTickEvents.START_CLIENT_TICK.register(client -> AutoFishHandler.onPlayerTick(client.player));
-        //? } else
-        //ClientTickEvents.START_CLIENT_TICK.register(client -> AutoFishHandler.onPlayerTick(client.player));
     }
 }

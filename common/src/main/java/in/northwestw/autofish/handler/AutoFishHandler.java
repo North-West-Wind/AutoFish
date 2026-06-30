@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import in.northwestw.autofish.AutoFish;
 import in.northwestw.autofish.config.Config;
+import in.northwestw.autofish.config.gui.ScreenHelper;
 import in.northwestw.autofish.config.gui.SettingsScreen;
 import in.northwestw.autofish.keybind.KeyBinds;
 import net.minecraft.ChatFormatting;
@@ -48,7 +49,7 @@ public class AutoFishHandler {
             Config.enableFilter(!Config.allFilters);
             if (player != null) sendOverlayMessage(player, "itemfilter", Config.allFilters);
         } else if (KeyBinds.settings.consumeClick())
-            minecraft.setScreenAndShow(new SettingsScreen());
+            ScreenHelper.showScreen(new SettingsScreen());
     }
 
     public static void onPlayerTick(final Player player) {
@@ -64,7 +65,10 @@ public class AutoFishHandler {
         }
         if (afterDrop) {
             if (tick == 0 && rodSlot != -1) {
+                //? if >=1.21.11 {
                 player.getInventory().setSelectedSlot(rodSlot);
+                //? } else
+                //player.getInventory().selected = rodSlot;
                 rodSlot = -1;
             }
             tick++;
@@ -119,7 +123,11 @@ public class AutoFishHandler {
         if (!Config.autoFish) return;
         InteractionHand hand = findHandOfRod(player);
         if (hand == null) return;
-        player.getInventory().getNonEquipmentItems().forEach(stack -> {
+        //? if >=1.21.11 {
+        List<ItemStack> items = player.getInventory().getNonEquipmentItems();
+        //? } else
+        //List<ItemStack> items = player.getInventory().items;
+        items.forEach(stack -> {
             Identifier rl = BuiltInRegistries.ITEM.getKey(stack.getItem());
             //? if >=26.1 {
             itemsBeforeFished.put(rl, itemsBeforeFished.getOrDefault(rl, 0) + stack.count());
@@ -143,12 +151,18 @@ public class AutoFishHandler {
             AutoFish.LOGGER.info("Fishing rod broke. Finding replacement...");
             boolean found = false;
             for (int i = 0; i < 9; i++) {
+                //? if >=1.21.11 {
                 if (i == player.getInventory().getSelectedSlot()) continue;
+                //? } else
+                //if (i == player.getInventory().selected) continue;
                 ItemStack stack = player.getInventory().getItem(i);
                 if (stack.getItem() instanceof FishingRodItem) {
                     if (Config.rodProtect && stack.getMaxDamage() - stack.getDamageValue() < 2) continue;
                     AutoFish.LOGGER.info("Found fishing rod for replacement");
+                    //? if >=1.21.11 {
                     player.getInventory().setSelectedSlot(i);
+                    //? } else
+                    //player.getInventory().selected = i;
                     found = true;
                     break;
                 }
@@ -169,7 +183,10 @@ public class AutoFishHandler {
 
     private static void checkItem(Player player) {
         if (!itemsBeforeFished.isEmpty()) {
+            //? if >=1.21.11 {
             List<ItemStack> items = player.getInventory().getNonEquipmentItems();
+            //? } else
+            //List<ItemStack> items = player.getInventory().items;
             for (String name : Config.filter) {
                 Identifier rl = Identifier.parse(name);
                 Optional<Item> opt = BuiltInRegistries.ITEM.getOptional(rl);
@@ -183,7 +200,10 @@ public class AutoFishHandler {
             itemsBeforeFished.clear();
             if (!shouldDrop.isEmpty()) {
                 processingDrop = true;
+                //? if >=1.21.11 {
                 rodSlot = player.getInventory().getSelectedSlot();
+                //? } else
+                //rodSlot = player.getInventory().selected;
             }
         }
     }
@@ -198,7 +218,10 @@ public class AutoFishHandler {
         }
         for (int ii = 0; ii < 9; ii++) {
             if (!player.getInventory().getItem(ii).getItem().equals(item)) continue;
+            //? if >=1.21.11 {
             player.getInventory().setSelectedSlot(ii);
+            //? } else
+            //player.getInventory().selected = ii;
             dropCd = 20;
             return;
         }

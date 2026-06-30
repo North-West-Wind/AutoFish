@@ -1,6 +1,7 @@
 package in.northwestw.autofish.config.gui;
 
 import com.google.common.collect.Lists;
+import com.mojang.datafixers.util.Pair;
 import in.northwestw.autofish.AutoFish;
 import in.northwestw.autofish.config.Config;
 import net.minecraft.client.Minecraft;
@@ -11,8 +12,10 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
+//? if >=1.21.11 {
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
+//? }
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -53,10 +56,17 @@ public class FilterSelectionScreen extends Screen {
         searching = original;
         search = new EditBox(this.font, this.width / 2 - 75, 35, 150, 20, AutoFish.getTranslatableComponent("gui.superfilterscreen.search")) {
             @Override
+            //? if >=1.21.11 {
             public boolean mouseClicked(MouseButtonEvent ev, boolean p_430750_) {
                 if (ev.button() == GLFW.GLFW_MOUSE_BUTTON_2) this.setValue("");
                 return super.mouseClicked(ev, p_430750_);
             }
+            //? } else {
+            /*public boolean mouseClicked(double mouseX, double mouseY, int button) {
+                if (button == GLFW.GLFW_MOUSE_BUTTON_2) this.setValue("");
+                return super.mouseClicked(mouseX, mouseY, button);
+            }
+            *///? }
         };
         search.setResponder(s -> {
             String[] args = s.split("/ +/");
@@ -66,11 +76,17 @@ public class FilterSelectionScreen extends Screen {
                 else if (arg.startsWith("#")) tags.add(arg.toLowerCase().substring(1));
                 else paths.add(arg.toLowerCase());
             }
+            //? if >=1.21.11 {
             List<HolderSet.Named<Item>> itemTags = BuiltInRegistries.ITEM.getTags().filter(tag -> tags.stream().anyMatch(t -> tag.key().location().getPath().contains(t))).toList();
+            //? } else
+            //List<HolderSet.Named<Item>> itemTags = BuiltInRegistries.ITEM.getTags().map(Pair::getSecond).filter(tag -> tags.stream().anyMatch(t -> tag.key().location().getPath().contains(t))).toList();
             searching = original.stream().filter(item -> {
                 Optional<ResourceKey<Item>> opt = BuiltInRegistries.ITEM.getResourceKey(item);
                 if (opt.isEmpty()) return false;
+                //? if >=1.21.11 {
                 Identifier rl = opt.get().identifier();
+                //? } else
+                //Identifier rl = opt.get().location();
                 boolean matchmod = mods.isEmpty(), matchtag = tags.isEmpty(), matcharg = false;
                 for (String mod : mods)
                     matchmod = matchmod || rl.getNamespace().toLowerCase().contains(mod);
@@ -87,10 +103,10 @@ public class FilterSelectionScreen extends Screen {
         Button add = new Button.Builder(AutoFish.getTranslatableComponent("gui.filterselection.save"), button -> {
             List<String> items = selected.stream().map(item -> BuiltInRegistries.ITEM.getKey(item).toString()).collect(Collectors.toList());
             Config.setFilter(items);
-            Minecraft.getInstance().setScreenAndShow(parent);
+            ScreenHelper.showScreen(parent);
         }).pos(this.width / 2 - 75, 60).size(72, 20).build();
         addRenderableWidget(add);
-        Button done = new Button.Builder(AutoFish.getTranslatableComponent("gui.filterselection.cancel"), button -> Minecraft.getInstance().setScreenAndShow(parent)).pos(this.width / 2 + 3, 60).size(72, 20).build();
+        Button done = new Button.Builder(AutoFish.getTranslatableComponent("gui.filterselection.cancel"), button -> ScreenHelper.showScreen(parent)).pos(this.width / 2 + 3, 60).size(72, 20).build();
         addRenderableWidget(done);
         previous = new Button.Builder(AutoFish.getLiteralComponent("<"), button -> { if (page > 0) page--; }).pos(this.width / 2 - 100, 60).size(20, 20).build();
         previous.visible = false;
@@ -114,7 +130,10 @@ public class FilterSelectionScreen extends Screen {
         Collection<Item> prioritized = searching.stream().filter(item -> {
             Optional<ResourceKey<Item>> opt = BuiltInRegistries.ITEM.getResourceKey(item);
             if (opt.isEmpty()) return false;
+            //? if >=1.21.11 {
             Identifier rl = opt.get().identifier();
+            //? } else
+            //Identifier rl = opt.get().location();
             boolean pri = Config.prioritize.contains(rl.toString());
             if (!pri) searchingCopy.add(item);
             return pri;
@@ -167,21 +186,40 @@ public class FilterSelectionScreen extends Screen {
     }
 
     @Override
+    //? if >=1.21.11 {
     public boolean keyPressed(KeyEvent ev) {
         if (ev.key() == GLFW.GLFW_KEY_ESCAPE) {
-            if (!search.isFocused()) Minecraft.getInstance().setScreenAndShow(parent);
+            if (!search.isFocused()) ScreenHelper.showScreen(parent);
             else search.setFocused(false);
         }
         return super.keyPressed(ev);
     }
+    //? } else {
+    /*public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+            if (!search.isFocused()) ScreenHelper.showScreen(parent);
+            else search.setFocused(false);
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+    *///? }
 
     @Override
+    //? if >=1.21.11 {
     public boolean mouseClicked(MouseButtonEvent ev, boolean flag) {
         clickX = ev.x();
         clickY = ev.y();
         clickProcessed = false;
         return super.mouseClicked(ev, flag);
     }
+    //? } else {
+    /*public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        clickX = mouseX;
+        clickY = mouseY;
+        clickProcessed = false;
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+    *///? }
 
     @Override
     public boolean shouldCloseOnEsc() {

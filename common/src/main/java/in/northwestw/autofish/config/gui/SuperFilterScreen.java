@@ -1,6 +1,7 @@
 package in.northwestw.autofish.config.gui;
 
 import com.google.common.collect.Lists;
+import com.mojang.datafixers.util.Pair;
 import in.northwestw.autofish.AutoFish;
 import in.northwestw.autofish.config.Config;
 import net.minecraft.client.Minecraft;
@@ -11,8 +12,10 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
+//? if >=1.21.11 {
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
+//? }
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -59,10 +62,17 @@ public class SuperFilterScreen extends Screen {
         searching = original;
         search = new EditBox(this.font, this.width / 2 - 75, 35, 150, 20, AutoFish.getTranslatableComponent("gui.superfilterscreen.search")) {
             @Override
-            public boolean mouseClicked(MouseButtonEvent ev, boolean flag) {
+            //? if >=1.21.11 {
+            public boolean mouseClicked(MouseButtonEvent ev, boolean p_430750_) {
                 if (ev.button() == GLFW.GLFW_MOUSE_BUTTON_2) this.setValue("");
-                return super.mouseClicked(ev, flag);
+                return super.mouseClicked(ev, p_430750_);
             }
+            //? } else {
+            /*public boolean mouseClicked(double mouseX, double mouseY, int button) {
+                if (button == GLFW.GLFW_MOUSE_BUTTON_2) this.setValue("");
+                return super.mouseClicked(mouseX, mouseY, button);
+            }
+            *///? }
         };
         search.setResponder(s -> {
             String[] args = s.split("/ +/");
@@ -72,11 +82,17 @@ public class SuperFilterScreen extends Screen {
                 else if (arg.startsWith("#")) tags.add(arg.toLowerCase().substring(1));
                 else paths.add(arg.toLowerCase());
             }
+            //? if >=1.21.11 {
             List<HolderSet.Named<Item>> itemTags = BuiltInRegistries.ITEM.getTags().filter(tag -> tags.stream().anyMatch(t -> tag.key().location().getPath().contains(t))).toList();
+            //? } else
+            //List<HolderSet.Named<Item>> itemTags = BuiltInRegistries.ITEM.getTags().map(Pair::getSecond).filter(tag -> tags.stream().anyMatch(t -> tag.key().location().getPath().contains(t))).toList();
             searching = original.stream().filter(item -> {
                 Optional<ResourceKey<Item>> opt = BuiltInRegistries.ITEM.getResourceKey(item);
                 if (opt.isEmpty()) return false;
+                //? if >=1.21.11 {
                 Identifier rl = opt.get().identifier();
+                //? } else
+                //Identifier rl = opt.get().location();
                 boolean matchmod = mods.isEmpty(), matchtag = tags.isEmpty(), matcharg = false;
                 for (String mod : mods)
                     matchmod = matchmod || rl.getNamespace().toLowerCase().contains(mod);
@@ -90,9 +106,9 @@ public class SuperFilterScreen extends Screen {
             if (page > maxPage - 1) page = Math.max(0, maxPage - 1);
         });
         addRenderableWidget(search);
-        Button add = new Button.Builder(AutoFish.getTranslatableComponent("gui.superfilterscreen.openfilter"), button -> Minecraft.getInstance().setScreenAndShow(new FilterSelectionScreen(this))).pos(this.width / 2 - 75, 60).size(72, 20).build();
+        Button add = new Button.Builder(AutoFish.getTranslatableComponent("gui.superfilterscreen.openfilter"), button -> ScreenHelper.showScreen(new FilterSelectionScreen(this))).pos(this.width / 2 - 75, 60).size(72, 20).build();
         addRenderableWidget(add);
-        Button done = new Button.Builder(AutoFish.getTranslatableComponent("gui.superfilterscreen.done"), button -> Minecraft.getInstance().setScreenAndShow(parent)).pos(this.width / 2 + 3, 60).size(72, 20).build();
+        Button done = new Button.Builder(AutoFish.getTranslatableComponent("gui.superfilterscreen.done"), button -> ScreenHelper.showScreen(parent)).pos(this.width / 2 + 3, 60).size(72, 20).build();
         addRenderableWidget(done);
         previous = new Button.Builder(AutoFish.getLiteralComponent("<"), button -> { if (page > 0) page--; }).pos(this.width / 2 - 100, 60).size(20, 20).build();
         previous.visible = false;
@@ -140,10 +156,17 @@ public class SuperFilterScreen extends Screen {
     }
 
     @Override
+    //? if >=1.21.11 {
     public boolean keyPressed(KeyEvent ev) {
-        if (ev.key() == GLFW.GLFW_KEY_ESCAPE) Minecraft.getInstance().setScreenAndShow(parent);
+        if (ev.key() == GLFW.GLFW_KEY_ESCAPE) ScreenHelper.showScreen(parent);
         return super.keyPressed(ev);
     }
+    //? } else {
+    /*public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE) ScreenHelper.showScreen(parent);
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+    *///? }
 
     @Override
     public boolean isPauseScreen() {
