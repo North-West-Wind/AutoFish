@@ -10,7 +10,7 @@ minecraft {
 
     val at = rootProject.file("src/${loader}/resources/META-INF/accesstransformer.cfg")
     if (at.exists()) {
-        //accessTransformer = at
+        accessTransformer.from(at)
     }
 
     runs {
