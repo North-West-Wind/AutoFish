@@ -22,8 +22,26 @@ jobs:
       - id: set-matrix
         run: bash ./.github/scripts/generate-publish-matrix.sh
 
+  build:
+    runs-on: ubuntu-latest
+    name: Build Everything
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: xxanqw/compilation@v3
+        with:
+          java-version: "25"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mod-artifacts
+          path: ./**/versions/**/build/libs
+          if-no-files-found: error
+
   publish:
-    needs: generate-publish-matrix
+    needs: [generate-publish-matrix, build]
     runs-on: ubuntu-latest
     name: Publish ${{ matrix.loader }} ${{ matrix.version }}
     strategy:
@@ -35,21 +53,9 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: "Set up JDK"
-        uses: actions/setup-java@v4
+      - uses: actions/download-artifact@v4
         with:
-          java-version: 25
-          distribution: "adopt"
-
-      - name: "Setup Gradle"
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-read-only: true
-          gradle-version: wrapper
-          add-job-summary: 'on-failure'
-
-      - name: "Run build"
-        run: ./gradlew ${{ matrix.loader }}:${{ matrix.version }}:build
+          name: mod-artifacts
 
       - name: "Parse gradle properties"
         id: gradle-properties
