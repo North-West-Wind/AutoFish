@@ -26,7 +26,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
 import java.util.*;
@@ -72,12 +71,12 @@ public class FilterSelectionScreen extends Screen {
             @Override
             //? if >=1.21.11 {
             public boolean mouseClicked(MouseButtonEvent ev, boolean p_430750_) {
-                if (ev.button() == GLFW.GLFW_MOUSE_BUTTON_2) this.setValue("");
+                if (ev.button() == ScreenHelper.MOUSE_BUTTON_LEFT) this.setValue("");
                 return super.mouseClicked(ev, p_430750_);
             }
             //? } else {
             /*public boolean mouseClicked(double mouseX, double mouseY, int button) {
-                if (button == GLFW.GLFW_MOUSE_BUTTON_2) this.setValue("");
+                if (button == ScreenHelper.MOUSE_BUTTON_LEFT) this.setValue("");
                 return super.mouseClicked(mouseX, mouseY, button);
             }
             *///? }
@@ -241,7 +240,7 @@ public class FilterSelectionScreen extends Screen {
     @Override
     //? if >=1.21.11 {
     public boolean keyPressed(KeyEvent ev) {
-        if (ev.key() == GLFW.GLFW_KEY_ESCAPE) {
+        if (ev.key() == ScreenHelper.KEY_ESCAPE) {
             if (!search.isFocused()) ScreenHelper.showScreen(parent);
             else search.setFocused(false);
         }
@@ -249,7 +248,7 @@ public class FilterSelectionScreen extends Screen {
     }
     //? } else {
     /*public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+        if (keyCode == ScreenHelper.KEY_ESCAPE) {
             if (!search.isFocused()) ScreenHelper.showScreen(parent);
             else
                 //? if >=1.19.4 {

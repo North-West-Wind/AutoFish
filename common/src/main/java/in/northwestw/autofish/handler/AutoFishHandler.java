@@ -247,7 +247,10 @@ public class AutoFishHandler {
 
     private static void click(Player player, InteractionHand hand, MultiPlayerGameMode controller) {
         if (controller == null) return;
+        //? if >=1.19.2 {
         controller.useItem(player, hand);
+        //? } else
+        //controller.useItem(player, player.level, hand);
     }
 
     private static InteractionHand findHandOfRod(Player player) {

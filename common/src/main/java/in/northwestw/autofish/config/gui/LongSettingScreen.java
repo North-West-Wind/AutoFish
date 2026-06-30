@@ -1,7 +1,6 @@
 package in.northwestw.autofish.config.gui;
 
 import in.northwestw.autofish.AutoFish;
-import net.minecraft.client.Minecraft;
 //? if >=26.1 {
 import net.minecraft.client.gui.GuiGraphicsExtractor;
  //?} elif >=1.20.1 {
@@ -15,7 +14,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 //? }
-import org.lwjgl.glfw.GLFW;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -45,12 +43,12 @@ public class LongSettingScreen extends Screen {
             @Override
             //? if >=1.21.11 {
             public boolean mouseClicked(MouseButtonEvent ev, boolean p_430750_) {
-                if (ev.button() == GLFW.GLFW_MOUSE_BUTTON_2) this.setValue("");
+                if (ev.button() == ScreenHelper.MOUSE_BUTTON_LEFT) this.setValue("");
                 return super.mouseClicked(ev, p_430750_);
             }
             //? } else {
             /*public boolean mouseClicked(double mouseX, double mouseY, int button) {
-                if (button == GLFW.GLFW_MOUSE_BUTTON_2) this.setValue("");
+                if (button == ScreenHelper.MOUSE_BUTTON_LEFT) this.setValue("");
                 return super.mouseClicked(mouseX, mouseY, button);
             }
             *///? }
@@ -114,12 +112,12 @@ public class LongSettingScreen extends Screen {
     @Override
     //? if >=1.21.11 {
     public boolean keyPressed(KeyEvent ev) {
-        if (ev.key() == GLFW.GLFW_KEY_ESCAPE) ScreenHelper.showScreen(parent);
+        if (ev.key() == ScreenHelper.KEY_ESCAPE) ScreenHelper.showScreen(parent);
         return super.keyPressed(ev);
     }
     //? } else {
     /*public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == GLFW.GLFW_KEY_ESCAPE) ScreenHelper.showScreen(parent);
+        if (keyCode == ScreenHelper.KEY_ESCAPE) ScreenHelper.showScreen(parent);
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
     *///? }
