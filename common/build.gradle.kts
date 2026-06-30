@@ -1,27 +1,29 @@
 plugins {
     id("multiloader-common")
-    id("net.neoforged.moddev") version "2.0.141"
+    id("fabric-loom-compat")
     kotlin("jvm") version "2.2.0"
     id("com.google.devtools.ksp") version "2.2.0-2.0.2"
 }
 
-neoForge {
-    neoFormVersion = commonMod.dep("neoform")
-    // Automatically enable AccessTransformers if the file exists
-    val at = rootProject.file("src/main/resources/META-INF/accesstransformer.cfg")
-    if (at.exists()) {
-        accessTransformers.from(at.absolutePath)
+loom {
+    if (stonecutter.eval(commonMod.mc, "<=1.21.11")) {
+        mixin {
+            useLegacyMixinAp = false
+        }
     }
 }
 
 dependencies {
-    // Fabric and NeoForge both bundle Fabric Mixin, so it is safe to use it in common
-    // If you need to update, check what version they are using to see what is compatible
-    // https://github.com/neoforged/NeoForge/blob/26.2.x/gradle.properties#L37
-    // https://github.com/FabricMC/fabric-loader/blob/master/gradle.properties#L12
-    compileOnly("net.fabricmc:sponge-mixin:0.17.3+mixin.0.8.7")
-    // Fabric and NeoForge both bundle MixinExtras, so it is safe to use it in common
-    annotationProcessor("io.github.llamalad7:mixinextras-common:0.5.3")
+    minecraft("com.mojang:minecraft:${commonMod.mc}")
+
+    if (stonecutter.eval(commonMod.mc, "<=1.21.11")) {
+        mappings(loom.layered {
+            officialMojangMappings()
+            commonMod.depOrNull("parchment")?.let { parchmentVersion ->
+                parchment("org.parchmentmc.data:parchment-${commonMod.mc}:$parchmentVersion@zip")
+            }
+        })
+    }
 }
 
 val commonJava: Configuration by configurations.creating {
