@@ -4,6 +4,10 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      changelog:
+        description: 'Changelog'
+        required: false
 
 concurrency:
   group: publish-${{ github.ref }}
@@ -70,6 +74,6 @@ jobs:
           version: ${{ steps.gradle-properties.outputs.MOD_VERSION }}-${{ matrix.version }}-${{ matrix.loader }}
           name: ${{ steps.gradle-properties.outputs.MOD_NAME }} ${{ steps.gradle-properties.outputs.MOD_VERSION }} (${{ matrix.version }}-${{ matrix.loader }})
           version-type: ${{ github.event.release.prerelease && 'beta' || 'release' }}
-          changelog: ${{ github.event.release.body || '' }}
+          changelog: ${{ inputs.changelog || github.event.release.body || '' }}
           retry-attempts: 6
           retry-delay: 30000
