@@ -1,5 +1,7 @@
 package in.northwestw.autofish.config.gui;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import in.northwestw.autofish.AutoFish;
 import in.northwestw.autofish.config.Config;
 //? if >=26.1 {
@@ -29,7 +31,7 @@ public class SettingsScreen extends Screen {
 
     @Override
     protected void init() {
-        List<Pair<Component, Button.OnPress>> pairs = List.of(
+        List<Pair<Component, Button.OnPress>> pairs = ImmutableList.of(
                 Pair.of(AutoFish.getTranslatableComponent("gui.autofish.recastdelay"), button ->
                         ScreenHelper.showScreen(new LongSettingScreen(this, "setrecastdelay", () -> Config.recastDelay, (newDelay) -> Config.recastDelay = newDelay, Config.RECAST_DELAY_RANGE[0], Config.RECAST_DELAY_RANGE[1]))),
                 Pair.of(AutoFish.getTranslatableComponent("gui.autofish.reelindelay"), button ->
@@ -45,10 +47,16 @@ public class SettingsScreen extends Screen {
         for (int ii = 0; ii < pairs.size(); ii++) {
             Pair<Component, Button.OnPress> pair = pairs.get(ii);
             Button button = ScreenHelper.makeButton(this.width / 2 - WIDTH / 2, this.height / 2 + (ii - pairs.size() / 2) * (HEIGHT + MARGIN), WIDTH, HEIGHT, pair.getLeft(), pair.getRight());
+            //? if <=1.16.5 {
+            /*addButton(button);
+            *///? } else
             addRenderableWidget(button);
         }
 
         Button done = ScreenHelper.makeButton(this.width / 2 - 75, this.height - 25, 150, 20, AutoFish.getTranslatableComponent("gui.autofish.done"), button -> onClose());
+        //? if <=1.16.5 {
+        /*addButton(done);
+        *///? } else
         addRenderableWidget(done);
     }
 

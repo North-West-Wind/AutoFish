@@ -1,7 +1,6 @@
 package in.northwestw.autofish.config.gui;
 
 import com.google.common.collect.Lists;
-import com.mojang.datafixers.util.Pair;
 import in.northwestw.autofish.AutoFish;
 import in.northwestw.autofish.config.Config;
 //? if >=26.1 {
@@ -18,6 +17,7 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 //? }
 //? if >=1.18.2 {
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.HolderSet;
 //? } else {
 /*import net.minecraft.tags.ItemTags;
@@ -43,7 +43,7 @@ public class FilterSelectionScreen extends Screen {
     //? if >=1.19.4 {
     private final Collection<Item> original = BuiltInRegistries.ITEM.stream().toList();
     //? } else
-    //private final Collection<Item> original = Registry.ITEM.stream().toList();
+    //private final Collection<Item> original = Registry.ITEM.stream().collect(Collectors.toList());
     private Collection<Item> searching;
     private final Set<Item> selected = new HashSet<>(Config.filter.stream().map(string ->
             //? if >=1.21.1 {
@@ -103,7 +103,7 @@ public class FilterSelectionScreen extends Screen {
             //? } else {
             /*List<Tag<Item>> itemTags = ItemTags.getAllTags().getAllTags().entrySet().stream()
                     .filter(entry -> tags.stream().anyMatch(t -> entry.getKey().toString().contains(t)))
-                    .map(Map.Entry::getValue).toList();
+                    .map(Map.Entry::getValue).collect(Collectors.toList());
             *///? }
             searching = original.stream().filter(item -> {
                 //? if >=1.21.11 {
@@ -116,7 +116,7 @@ public class FilterSelectionScreen extends Screen {
                 Identifier rl = opt.get().location();
                 *///? } else {
                 /*Optional<ResourceKey<Item>> opt = Registry.ITEM.getResourceKey(item);
-                if (opt.isEmpty()) return false;
+                if (!opt.isPresent()) return false;
                 Identifier rl = opt.get().location();
                 *///? }
                 boolean matchmod = mods.isEmpty(), matchtag = tags.isEmpty(), matcharg = false;
@@ -134,7 +134,6 @@ public class FilterSelectionScreen extends Screen {
             maxPage = (int) Math.ceil(searching.size() / (double) max);
             if (page > maxPage - 1) page = Math.max(0, maxPage - 1);
         });
-        addRenderableWidget(search);
         Button add = ScreenHelper.makeButton(this.width / 2 - 75, 60, 72, 20, AutoFish.getTranslatableComponent("gui.filterselection.save"), button -> {
             //? if >=1.19.4 {
             List<String> items = selected.stream().map(item -> BuiltInRegistries.ITEM.getKey(item).toString()).collect(Collectors.toList());
@@ -143,15 +142,24 @@ public class FilterSelectionScreen extends Screen {
             Config.setFilter(items);
             ScreenHelper.showScreen(parent);
         });
-        addRenderableWidget(add);
         Button done = ScreenHelper.makeButton(this.width / 2 + 3, 60, 72, 20, AutoFish.getTranslatableComponent("gui.filterselection.cancel"), button -> ScreenHelper.showScreen(parent));
-        addRenderableWidget(done);
         previous = ScreenHelper.makeButton(this.width / 2 - 100, 60, 20, 20, AutoFish.getLiteralComponent("<"), button -> { if (page > 0) page--; });
         previous.visible = false;
-        addRenderableWidget(previous);
         next = ScreenHelper.makeButton(this.width / 2 + 80, 60, 20, 20, AutoFish.getLiteralComponent(">"), button -> { if (page < maxPage - 1) page++; });
         next.visible = false;
+        //? if <=1.16.5 {
+        /*this.children.add(search);
+        addButton(add);
+        addButton(done);
+        addButton(previous);
+        addButton(next);
+        *///? } else {
+        addRenderableWidget(search);
+        addRenderableWidget(add);
+        addRenderableWidget(done);
+        addRenderableWidget(previous);
         addRenderableWidget(next);
+        //? }
     }
 
     @Override
@@ -181,13 +189,13 @@ public class FilterSelectionScreen extends Screen {
             Identifier rl = opt.get().location();
             *///? } else {
             /*Optional<ResourceKey<Item>> opt = Registry.ITEM.getResourceKey(item);
-            if (opt.isEmpty()) return false;
+            if (!opt.isPresent()) return false;
             Identifier rl = opt.get().location();
             *///? }
             boolean pri = Config.prioritize.contains(rl.toString());
             if (!pri) searchingCopy.add(item);
             return pri;
-        }).toList();
+        }).collect(Collectors.toList());
         Item[] items = Stream.concat(prioritized.stream(), searchingCopy.stream()).toArray(Item[]::new);
         if (items.length > 0 && page >= 0) {
             for (int i = page * max; i < Math.min((page + 1) * max, searching.size()); i++) {

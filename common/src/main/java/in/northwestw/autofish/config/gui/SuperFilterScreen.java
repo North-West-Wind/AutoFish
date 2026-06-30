@@ -104,7 +104,7 @@ public class SuperFilterScreen extends Screen {
             //? } else {
             /*List<Tag<Item>> itemTags = ItemTags.getAllTags().getAllTags().entrySet().stream()
                     .filter(entry -> tags.stream().anyMatch(t -> entry.getKey().toString().contains(t)))
-                    .map(Map.Entry::getValue).toList();
+                    .map(Map.Entry::getValue).collect(Collectors.toList());
             *///? }
             searching = original.stream().filter(item -> {
                 //? if >=1.21.11 {
@@ -117,7 +117,7 @@ public class SuperFilterScreen extends Screen {
                 Identifier rl = opt.get().location();
                 *///? } else {
                 /*Optional<ResourceKey<Item>> opt = Registry.ITEM.getResourceKey(item);
-                if (opt.isEmpty()) return false;
+                if (!opt.isPresent()) return false;
                 Identifier rl = opt.get().location();
                 *///? }
                 boolean matchmod = mods.isEmpty(), matchtag = tags.isEmpty(), matcharg = false;
@@ -135,17 +135,25 @@ public class SuperFilterScreen extends Screen {
             maxPage = (int) Math.ceil(original.size() / (double) max);
             if (page > maxPage - 1) page = Math.max(0, maxPage - 1);
         });
-        addRenderableWidget(search);
         Button add = ScreenHelper.makeButton(this.width / 2 - 75, 60, 72, 20, AutoFish.getTranslatableComponent("gui.superfilterscreen.openfilter"), button -> ScreenHelper.showScreen(new FilterSelectionScreen(this)));
-        addRenderableWidget(add);
         Button done = ScreenHelper.makeButton(this.width / 2 + 3, 60, 72, 20, AutoFish.getTranslatableComponent("gui.superfilterscreen.done"), button -> ScreenHelper.showScreen(parent));
-        addRenderableWidget(done);
         previous = ScreenHelper.makeButton(this.width / 2 - 100, 60, 20, 20, AutoFish.getLiteralComponent("<"), button -> { if (page > 0) page--; });
         previous.visible = false;
-        addRenderableWidget(previous);
         next = ScreenHelper.makeButton(this.width / 2 + 80, 60, 20, 20, AutoFish.getLiteralComponent(">"), button -> { if (page < maxPage - 1) page++; });
         next.visible = false;
+        //? if <=1.16.5 {
+        /*this.children.add(search);
+        addButton(add);
+        addButton(done);
+        addButton(previous);
+        addButton(next);
+        *///? } else {
+        addRenderableWidget(search);
+        addRenderableWidget(add);
+        addRenderableWidget(done);
+        addRenderableWidget(previous);
         addRenderableWidget(next);
+        //? }
     }
 
     @Override

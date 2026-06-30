@@ -8,8 +8,11 @@ import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 //? } elif >=1.18.2 {
 /*import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-*///? } else {
+*///? } elif >=1.17.1 {
 /*import net.minecraftforge.fmlclient.registry.ClientRegistry;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+*///? } else {
+/*import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 *///? }
 import net.minecraftforge.event.TickEvent;

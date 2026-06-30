@@ -54,7 +54,6 @@ public class LongSettingScreen extends Screen {
             *///? }
         };
         editBox.setValue(Long.toString(this.supplier.get()));
-        addRenderableWidget(editBox);
         Button save = ScreenHelper.makeButton(this.width / 2 - 75, this.height / 2, 150, 20, AutoFish.getTranslatableComponent("gui." + this.middleTranslationKey + ".save"), button -> {
             if (!isNumeric(editBox.getValue())) editBox.setValue(Long.toString(this.supplier.get()));
             else {
@@ -66,7 +65,13 @@ public class LongSettingScreen extends Screen {
                 }
             }
         });
+        //? if <=1.16.5 {
+        /*this.children.add(editBox);
+        addButton(save);
+        *///? } else {
+        addRenderableWidget(editBox);
         addRenderableWidget(save);
+        //? }
     }
 
     @Override

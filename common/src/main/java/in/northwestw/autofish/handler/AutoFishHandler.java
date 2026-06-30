@@ -70,8 +70,10 @@ public class AutoFishHandler {
             if (tick == 0 && rodSlot != -1) {
                 //? if >=1.21.11 {
                 player.getInventory().setSelectedSlot(rodSlot);
-                //? } else
-                //player.getInventory().selected = rodSlot;
+                //? } elif >=1.17.1 {
+                /*player.getInventory().selected = rodSlot;
+                *///? } else
+                //player.inventory.selected = rodSlot;
                 rodSlot = -1;
             }
             tick++;
@@ -132,8 +134,10 @@ public class AutoFishHandler {
         if (hand == null) return;
         //? if >=1.21.11 {
         List<ItemStack> items = player.getInventory().getNonEquipmentItems();
-        //? } else
-        //List<ItemStack> items = player.getInventory().items;
+        //? } elif >=1.17.1 {
+        /*List<ItemStack> items = player.getInventory().items;
+        *///? } else
+        //List<ItemStack> items = player.inventory.items;
         items.forEach(stack -> {
             //? if >=1.19.4 {
             Identifier rl = BuiltInRegistries.ITEM.getKey(stack.getItem());
@@ -163,16 +167,23 @@ public class AutoFishHandler {
             for (int i = 0; i < 9; i++) {
                 //? if >=1.21.11 {
                 if (i == player.getInventory().getSelectedSlot()) continue;
-                //? } else
-                //if (i == player.getInventory().selected) continue;
                 ItemStack stack = player.getInventory().getItem(i);
+                //? } elif >=1.17.1 {
+                /*if (i == player.getInventory().selected) continue;
+                ItemStack stack = player.getInventory().getItem(i);
+                *///? } else {
+                /*if (i == player.inventory.selected) continue;
+                ItemStack stack = player.inventory.getItem(i);
+                *///? }
                 if (stack.getItem() instanceof FishingRodItem) {
                     if (Config.rodProtect && stack.getMaxDamage() - stack.getDamageValue() < 2) continue;
                     AutoFish.LOGGER.info("Found fishing rod for replacement");
                     //? if >=1.21.11 {
                     player.getInventory().setSelectedSlot(i);
-                    //? } else
-                    //player.getInventory().selected = i;
+                    //? } elif >=1.17.1 {
+                    /*player.getInventory().selected = i;
+                    *///? } else
+                    //player.inventory.selected = i;
                     found = true;
                     break;
                 }
@@ -195,8 +206,10 @@ public class AutoFishHandler {
         if (!itemsBeforeFished.isEmpty()) {
             //? if >=1.21.11 {
             List<ItemStack> items = player.getInventory().getNonEquipmentItems();
-            //? } else
-            //List<ItemStack> items = player.getInventory().items;
+            //? } elif >=1.17.1 {
+            /*List<ItemStack> items = player.getInventory().items;
+            *///? } else
+            //List<ItemStack> items = player.inventory.items;
             for (String name : Config.filter) {
                 //? if >=1.21.1 {
                 Identifier rl = Identifier.parse(name);
@@ -206,7 +219,7 @@ public class AutoFishHandler {
                 Optional<Item> opt = BuiltInRegistries.ITEM.getOptional(rl);
                 //? } else
                 //Optional<Item> opt = Registry.ITEM.getOptional(rl);
-                if (opt.isEmpty()) continue;
+                if (!opt.isPresent()) continue;
                 Item item = opt.get();
                 int newCount = items.stream().filter(stack -> stack.getItem().toString().equals(rl.toString())).mapToInt(ItemStack::getCount).reduce(Integer::sum).orElse(0);
                 int oldCount = itemsBeforeFished.getOrDefault(rl, 0);
@@ -218,8 +231,10 @@ public class AutoFishHandler {
                 processingDrop = true;
                 //? if >=1.21.11 {
                 rodSlot = player.getInventory().getSelectedSlot();
-                //? } else
-                //rodSlot = player.getInventory().selected;
+                //? } elif >=1.17.1 {
+                /*rodSlot = player.getInventory().selected;
+                *///? } else
+                //rodSlot = player.inventory.selected;
             }
         }
     }
@@ -233,11 +248,16 @@ public class AutoFishHandler {
             return;
         }
         for (int ii = 0; ii < 9; ii++) {
-            if (!player.getInventory().getItem(ii).getItem().equals(item)) continue;
             //? if >=1.21.11 {
+            if (!player.getInventory().getItem(ii).getItem().equals(item)) continue;
             player.getInventory().setSelectedSlot(ii);
-            //? } else
-            //player.getInventory().selected = ii;
+            //? } elif >=1.17.1 {
+            /*if (!player.getInventory().getItem(ii).getItem().equals(item)) continue;
+            player.getInventory().selected = ii;
+            *///? } else {
+            /*if (!player.inventory.getItem(ii).getItem().equals(item)) continue;
+            player.inventory.selected = ii;
+            *///? }
             dropCd = 20;
             return;
         }
