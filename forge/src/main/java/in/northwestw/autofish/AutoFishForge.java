@@ -5,7 +5,10 @@ import in.northwestw.autofish.keybind.KeyBinds;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.event.TickEvent;
+//? if >=1.21.11 {
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
+//? } else
+//import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 
@@ -33,8 +36,13 @@ public class AutoFishForge {
 
         @SubscribeEvent
         public static void playerTickPre(TickEvent.PlayerTickEvent.Pre event) {
+            //? if >=1.21.11 {
             if (event.side() != LogicalSide.CLIENT) return;
             AutoFishHandler.onPlayerTick(event.player());
+            //? } else {
+            /*if (event.side != LogicalSide.CLIENT) return;
+            AutoFishHandler.onPlayerTick(event.player);
+            *///? }
         }
     }
 }
