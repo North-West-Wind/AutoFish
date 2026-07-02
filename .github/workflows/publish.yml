@@ -9,9 +9,9 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  generate-matrix:
+  generate-publish-matrix:
     runs-on: ubuntu-latest
-    name: Generate Matrix
+    name: Generate Publish Matrix
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
@@ -20,19 +20,19 @@ jobs:
           fetch-depth: 1
 
       - id: set-matrix
-        run: bash ./.github/scripts/generate-matrix.sh
+        run: bash ./.github/scripts/generate-publish-matrix.sh
 
   build:
     uses: ./.github/workflows/build.yml
 
   publish:
-    needs: [generate-matrix, build]
+    needs: [generate-publish-matrix, build]
     runs-on: ubuntu-latest
     name: Publish ${{ matrix.loader }} ${{ matrix.version }}
     strategy:
       max-parallel: 3
       fail-fast: false
-      matrix: ${{ fromJSON(needs.generate-matrix.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.generate-publish-matrix.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -40,7 +40,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: artifact-${{ matrix.loader }}-${{ matrix.version }}
+          name: mod-artifacts
 
       - name: "Parse gradle properties"
         id: gradle-properties
@@ -53,7 +53,7 @@ jobs:
           curseforge-id: ${{ vars.CURSEFORGE_PUB && vars.CURSEFORGE_ID }}
           curseforge-token: ${{ vars.CURSEFORGE_PUB && secrets.CURSEFORGE_TOKEN }}
           files: |
-            ${{ steps.gradle-properties.outputs.MOD_ID }}-${{ steps.gradle-properties.outputs.MOD_VERSION }}-${{ matrix.version }}-${{ matrix.loader }}.jar
+            ${{ matrix.loader }}/versions/${{ matrix.version }}/build/libs/*.jar
           loaders: ${{ join(matrix.supported_loaders, ' ') }}
           game-versions: |
             >=${{ steps.gradle-properties.outputs.MIN_MINECRAFT_VERSION }} <=${{ steps.gradle-properties.outputs.MINECRAFT_VERSION }}

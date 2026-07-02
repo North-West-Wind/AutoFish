@@ -10,26 +10,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  generate-matrix:
-    runs-on: ubuntu-latest
-    name: Generate Matrix
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 1
-
-      - id: set-matrix
-        run: bash ./.github/scripts/generate-matrix.sh
-
   build:
-    needs: generate-matrix
     name: Build Everything
     runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 3
-      matrix: ${{ fromJSON(needs.generate-matrix.outputs.matrix) }}
     
     steps:
     - name: Checkout
@@ -56,11 +39,11 @@ jobs:
       shell: bash
 
     - name: Build with Gradle
-      run: ./gradlew ${{ matrix.loader }}:${{ matrix.version }}:build
+      run: ./gradlew build
       shell: bash
       
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: artifact-${{ matrix.loader }}-${{ matrix.version }}
-        path: ./${{ matrix.loader }}/versions/${{ matrix.version }}/build/libs
+        name: mod-artifacts
+        path: ./**/versions/**/build/libs
