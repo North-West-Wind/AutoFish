@@ -23,22 +23,7 @@ jobs:
         run: bash ./.github/scripts/generate-publish-matrix.sh
 
   build:
-    runs-on: ubuntu-latest
-    name: Build Everything
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - uses: xxanqw/compilation@v3
-        with:
-          java-version: "25"
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: mod-artifacts
-          path: ./**/versions/**/build/libs
-          if-no-files-found: error
+    uses: ./.github/workflows/build.yml
 
   publish:
     needs: [generate-publish-matrix, build]

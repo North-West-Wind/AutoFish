@@ -3,6 +3,7 @@ name: Build
 on:
   push:
   pull_request:
+  workflow_call:
 
 concurrency:
   group: build-${{ github.ref }}
@@ -10,7 +11,10 @@ concurrency:
 
 jobs:
   build:
+    name: Build Everything
     runs-on: ubuntu-latest
+    outputs:
+      artifact-name: ${{ steps.upload.outputs.artifact-name }}
     
     steps:
     - name: Checkout
@@ -18,10 +22,23 @@ jobs:
       with:
           fetch-depth: 0
 
-    - name: Compile with Java 25
-      uses: xxanqw/compilation@v3
+    - name: Set up JDK
+      uses: actions/setup-java@v3
       with:
-        java-version: "25"
+        java-version: 25
+        distribution: temurin
+        cache: gradle
+
+    - name: Setup Gradle
+      uses: gradle/gradle-build-action@v2
+
+    - name: Make gradlew executable
+      run: chmod +x ./gradlew
+      shell: bash
+
+    - name: Build with Gradle
+      run: ./gradlew build
+      shell: bash
       
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
