@@ -34,7 +34,7 @@ public class AutoFishHandler {
     private static boolean processingDrop, pendingReelIn, pendingRecast, lastTickFishing, afterDrop;
     private static int dropCd, rodSlot;
     private static long tick, checkTick;
-    private static final Map<Identifier, Integer> itemsBeforeFished = Maps.newHashMap();
+    private static final Map<String, Integer> itemsBeforeFished = Maps.newHashMap();
 
     public static void onKeyInput() {
         Minecraft minecraft = Minecraft.getInstance();
@@ -144,9 +144,9 @@ public class AutoFishHandler {
             //? } else
             //Identifier rl = Registry.ITEM.getKey(stack.getItem());
             //? if >=26.1 {
-            itemsBeforeFished.put(rl, itemsBeforeFished.getOrDefault(rl, 0) + stack.count());
+            itemsBeforeFished.put(rl.toString(), itemsBeforeFished.getOrDefault(rl, 0) + stack.count());
             //? } else
-            //itemsBeforeFished.put(rl, itemsBeforeFished.getOrDefault(rl, 0) + stack.getCount());
+            //itemsBeforeFished.put(rl.toString(), itemsBeforeFished.getOrDefault(rl.toString(), 0) + stack.getCount());
         });
         click(player, hand, Minecraft.getInstance().gameMode);
         ItemStack fishingRod = player.getItemInHand(hand);
@@ -158,7 +158,7 @@ public class AutoFishHandler {
             if (Config.autoReplace) needReplace = true;
             else {
                 Config.autoFish = false;
-                sendOverlayMessage(player, "forgeautofish", Config.autoFish);
+                sendOverlayMessage(player, "autofish", Config.autoFish);
                 return;
             }
         if (needReplace) {
@@ -221,8 +221,8 @@ public class AutoFishHandler {
                 //Optional<Item> opt = Registry.ITEM.getOptional(rl);
                 if (!opt.isPresent()) continue;
                 Item item = opt.get();
-                int newCount = items.stream().filter(stack -> stack.getItem().toString().equals(rl.toString())).mapToInt(ItemStack::getCount).reduce(Integer::sum).orElse(0);
-                int oldCount = itemsBeforeFished.getOrDefault(rl, 0);
+                int newCount = items.stream().filter(stack -> stack.getItem().equals(item)).mapToInt(ItemStack::getCount).reduce(Integer::sum).orElse(0);
+                int oldCount = itemsBeforeFished.getOrDefault(rl.toString(), 0);
                 int diff = newCount - oldCount;
                 for (int ii = 0; ii < diff; ii++) shouldDrop.add(item);
             }

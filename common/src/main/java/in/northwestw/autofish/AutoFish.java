@@ -35,8 +35,8 @@ public class AutoFish
         //? if >=1.21.1 {
         return MutableComponent.create(new PlainTextContents.LiteralContents(str));
         //? } elif >=1.19.2 {
-        //return MutableComponent.create(new LiteralContents(str));
-        //? } else
+        /*return MutableComponent.create(new LiteralContents(str));
+        *///? } else
         //return new TextComponent(str);
     }
 }
