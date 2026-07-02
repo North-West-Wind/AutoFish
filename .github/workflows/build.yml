@@ -10,17 +10,32 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  generate-matrix:
+    runs-on: ubuntu-latest
+    name: Generate Matrix
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - id: set-matrix
+        run: bash ./.github/scripts/generate-matrix.sh
+
   build:
+    needs: generate-matrix
     name: Build Everything
     runs-on: ubuntu-latest
-    outputs:
-      artifact-name: ${{ steps.upload.outputs.artifact-name }}
+    strategy:
+      max-parallel: 3
+      matrix: ${{ fromJSON(needs.generate-matrix.outputs.matrix) }}
     
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
-          fetch-depth: 0
+          fetch-depth: 1
 
     - name: Set up JDK
       uses: actions/setup-java@v3
@@ -30,18 +45,22 @@ jobs:
         cache: gradle
 
     - name: Setup Gradle
-      uses: gradle/gradle-build-action@v2
+      uses: gradle/actions/setup-gradle@v6
+      with:
+        cache-read-only: false
+        gradle-version: wrapper
+        add-job-summary: 'on-failure'
 
     - name: Make gradlew executable
       run: chmod +x ./gradlew
       shell: bash
 
     - name: Build with Gradle
-      run: ./gradlew build
+      run: ./gradlew ${{ matrix.loader }}:${{ matrix.version }}:build
       shell: bash
       
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: mod-artifacts
-        path: ./**/versions/**/build/libs
+        name: artifact-${{ matrix.loader }}-${{ matrix.version }}
+        path: ./${{ matrix.loader }}/versions/${{ matrix.version }}/build/libs

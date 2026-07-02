@@ -9,38 +9,38 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  generate-publish-matrix:
+  generate-matrix:
     runs-on: ubuntu-latest
-    name: Generate Publish Matrix
+    name: Generate Matrix
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
       - id: set-matrix
-        run: bash ./.github/scripts/generate-publish-matrix.sh
+        run: bash ./.github/scripts/generate-matrix.sh
 
   build:
     uses: ./.github/workflows/build.yml
 
   publish:
-    needs: [generate-publish-matrix, build]
+    needs: [generate-matrix, build]
     runs-on: ubuntu-latest
     name: Publish ${{ matrix.loader }} ${{ matrix.version }}
     strategy:
       max-parallel: 3
       fail-fast: false
-      matrix: ${{ fromJSON(needs.generate-publish-matrix.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.generate-matrix.outputs.matrix) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
       - uses: actions/download-artifact@v4
         with:
-          name: mod-artifacts
+          name: artifact-${{ matrix.loader }}-${{ matrix.version }}
 
       - name: "Parse gradle properties"
         id: gradle-properties
@@ -53,7 +53,7 @@ jobs:
           curseforge-id: ${{ vars.CURSEFORGE_PUB && vars.CURSEFORGE_ID }}
           curseforge-token: ${{ vars.CURSEFORGE_PUB && secrets.CURSEFORGE_TOKEN }}
           files: |
-            ${{ matrix.loader }}/versions/${{ matrix.version }}/build/libs/*.jar
+            ${{ steps.gradle-properties.outputs.MOD_ID }}-${{ steps.gradle-properties.outputs.MOD_VERSION }}-${{ matrix.version }}-${{ matrix.loader }}.jar
           loaders: ${{ join(matrix.supported_loaders, ' ') }}
           game-versions: |
             >=${{ steps.gradle-properties.outputs.MIN_MINECRAFT_VERSION }} <=${{ steps.gradle-properties.outputs.MINECRAFT_VERSION }}
