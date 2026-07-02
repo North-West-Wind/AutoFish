@@ -167,6 +167,7 @@ public class SuperFilterScreen extends Screen {
         graphics.drawCenteredString(this.font, this.title, this.width / 2, 20, -1);
     *///? } else {
     /*public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(poseStack);
         super.render(poseStack, mouseX, mouseY, partialTicks);
         drawCenteredString(poseStack, this.font, this.title, this.width / 2, 20, -1);
     *///? }
