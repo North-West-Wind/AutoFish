@@ -10,8 +10,8 @@ plugins {
 if (stonecutter.eval(commonMod.mc, "<=1.20.4")) version = "${commonMod.version}-${stonecutterBuild.current.version}"
 
 minecraft {
-    if (stonecutter.eval(commonMod.mc, "<1.17")) mappings("parchment", "${commonMod.mc}-${commonMod.dep("parchment")}")
-    mappings("official", commonMod.mc)
+    if (commonMod.depOrNull("parchment") != null) mappings("parchment", "${commonMod.mc}-${commonMod.dep("parchment")}")
+    else mappings("official", commonMod.mc)
 
     val at = rootProject.file("src/${loader}/resources/META-INF/accesstransformer.cfg")
     if (at.exists()) {
