@@ -63,10 +63,10 @@ jobs:
 
       - uses: Kir-Antipov/mc-publish@v3.3
         with:
-          modrinth-id: ${{ vars.MODRINTH_ID }}
-          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-          curseforge-id: ${{ vars.CURSEFORGE_ID }}
-          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          modrinth-id: ${{ vars.MODRINTH_PUB && vars.MODRINTH_ID }}
+          modrinth-token: ${{ vars.MODRINTH_PUB && secrets.MODRINTH_TOKEN }}
+          curseforge-id: ${{ vars.CURSEFORGE_PUB && vars.CURSEFORGE_ID }}
+          curseforge-token: ${{ vars.CURSEFORGE_PUB && secrets.CURSEFORGE_TOKEN }}
           files: |
             ${{ matrix.loader }}/versions/${{ matrix.version }}/build/libs/*.jar
           loaders: ${{ join(matrix.supported_loaders, ' ') }}
