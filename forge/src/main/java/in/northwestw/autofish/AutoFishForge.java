@@ -29,10 +29,10 @@ public class AutoFishForge {
     public AutoFishForge() {
     }
 
-    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-    public static class ModEvents {
-        @SubscribeEvent
+    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
+    public static class ForgeEvents {
         //? if >=1.19.2 {
+        @SubscribeEvent
         public static void registerKeyMappings(RegisterKeyMappingsEvent event) {
             event.register(KeyBinds.autofish);
             event.register(KeyBinds.rodprotect);
@@ -40,20 +40,12 @@ public class AutoFishForge {
             event.register(KeyBinds.settings);
             event.register(KeyBinds.itemfilter);
         }
-        //? } else {
-        /*public static void setupClient(FMLClientSetupEvent event) {
-            ClientRegistry.registerKeyBinding(KeyBinds.autofish);
-            ClientRegistry.registerKeyBinding(KeyBinds.rodprotect);
-            ClientRegistry.registerKeyBinding(KeyBinds.autoreplace);
-            ClientRegistry.registerKeyBinding(KeyBinds.settings);
-            ClientRegistry.registerKeyBinding(KeyBinds.itemfilter);
-        }
-        *///? }
+        //? }
 
         @SubscribeEvent
         //? if >=1.19.2 {
         public static void inputKey(InputEvent.Key event) {
-        //? } else
+         //? } else
         //public static void inputKey(InputEvent.KeyInputEvent event) {
             AutoFishHandler.onKeyInput();
         }
@@ -61,7 +53,7 @@ public class AutoFishForge {
         @SubscribeEvent
         //? if >=1.21.1 {
         public static void playerTickPre(TickEvent.PlayerTickEvent.Pre event) {
-        //? } else {
+         //? } else {
         /*public static void playerTickPre(TickEvent.PlayerTickEvent event) {
             if (event.phase != TickEvent.Phase.START) return;
             *///? }
@@ -74,4 +66,18 @@ public class AutoFishForge {
             *///? }
         }
     }
+
+    //? if <1.19 {
+    /*@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class ModEvents {
+        @SubscribeEvent
+        public static void setupClient(FMLClientSetupEvent event) {
+            ClientRegistry.registerKeyBinding(KeyBinds.autofish);
+            ClientRegistry.registerKeyBinding(KeyBinds.rodprotect);
+            ClientRegistry.registerKeyBinding(KeyBinds.autoreplace);
+            ClientRegistry.registerKeyBinding(KeyBinds.settings);
+            ClientRegistry.registerKeyBinding(KeyBinds.itemfilter);
+        }
+    }
+    *///? }
 }

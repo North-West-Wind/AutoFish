@@ -73,8 +73,12 @@ public class Config {
                     autoReplace = json.get("auto_replace").getAsBoolean();
                 if (json.has("all_filters"))
                     allFilters = json.get("all_filters").getAsBoolean();
-                if (json.has("filter"))
-                    filter = Stream.of(json.getAsJsonArray("filter")).map(JsonElement::getAsString).collect(Collectors.toList());
+                if (json.has("filter")) {
+                    filter = Lists.newArrayList();
+                    JsonArray arr = json.getAsJsonArray("filter");
+                    for (int ii = 0; ii < arr.size(); ii++)
+                        filter.add(arr.get(ii).getAsString());
+                }
 
                 // validate
                 if (recastDelay < RECAST_DELAY_RANGE[0] || recastDelay > RECAST_DELAY_RANGE[1]) {

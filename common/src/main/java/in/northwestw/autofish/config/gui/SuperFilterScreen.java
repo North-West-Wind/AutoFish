@@ -100,8 +100,8 @@ public class SuperFilterScreen extends Screen {
             //? } elif >=1.19.4 {
             //List<HolderSet.Named<Item>> itemTags = BuiltInRegistries.ITEM.getTags().map(Pair::getSecond).filter(tag -> tags.stream().anyMatch(t -> tag.key().location().getPath().contains(t))).toList();
             //? } elif >=1.18.2 {
-            //List<HolderSet.Named<Item>> itemTags = Registry.ITEM.getTags().map(Pair::getSecond).filter(tag -> tags.stream().anyMatch(t -> tag.key().location().getPath().contains(t))).toList();
-            //? } else {
+            /*List<HolderSet.Named<Item>> itemTags = Registry.ITEM.getTags().map(Pair::getSecond).filter(tag -> tags.stream().anyMatch(t -> tag.key().location().getPath().contains(t))).toList();
+            *///? } else {
             /*List<Tag<Item>> itemTags = ItemTags.getAllTags().getAllTags().entrySet().stream()
                     .filter(entry -> tags.stream().anyMatch(t -> entry.getKey().toString().contains(t)))
                     .map(Map.Entry::getValue).collect(Collectors.toList());
