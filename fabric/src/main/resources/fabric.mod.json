@@ -1,0 +1,30 @@
+{
+    "schemaVersion": 1,
+    "id": "${modId}",
+    "version": "${modVersion}",
+    "name": "${modName}",
+    "description": "${modDescription}",
+    "authors": [
+        "${modAuthor}"
+    ],
+    "contact": {
+        "homepage": "${modGitHub}",
+        "sources": "${modGitHub}",
+        "issues": "${modGitHub}/issues"
+    },
+    "license": "${modLicense}",
+    "icon": "${modId}.png",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "in.northwestw.autofish.AutoFishFabric"
+        ]
+    },
+    "depends": {
+        "fabricloader": ">=${fabricLoaderVersion}",
+        "fabric-api": "*",
+        "minecraft": ">=${minMinecraftVersion}",
+        "java": ">=${javaVersion}"
+    }
+}
+  

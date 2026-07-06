@@ -1,0 +1,51 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - multiloader-stonecutter
+  pull_request:
+  workflow_call:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build Everything
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+      with:
+          fetch-depth: 1
+
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: 25
+        distribution: temurin
+        cache: gradle
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v6
+      with:
+        cache-read-only: false
+        gradle-version: wrapper
+        add-job-summary: 'on-failure'
+
+    - name: Make gradlew executable
+      run: chmod +x ./gradlew
+      shell: bash
+
+    - name: Build with Gradle
+      run: ./gradlew build
+      shell: bash
+      
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: mod-artifacts
+        path: ./**/versions/**/build/libs

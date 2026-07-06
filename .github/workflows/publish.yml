@@ -1,0 +1,65 @@
+name: Publish
+
+on:
+  release:
+    types: [published]
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  generate-publish-matrix:
+    runs-on: ubuntu-latest
+    name: Generate Publish Matrix
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - id: set-matrix
+        run: bash ./.github/scripts/generate-publish-matrix.sh
+
+  build:
+    uses: ./.github/workflows/build.yml
+
+  publish:
+    needs: [generate-publish-matrix, build]
+    runs-on: ubuntu-latest
+    name: Publish ${{ matrix.loader }} ${{ matrix.version }}
+    strategy:
+      max-parallel: 3
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.generate-publish-matrix.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: mod-artifacts
+
+      - name: "Parse gradle properties"
+        id: gradle-properties
+        run: bash ./.github/scripts/parse-gradle-properties.sh ${{ matrix.version }}
+
+      - uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          modrinth-id: ${{ vars.MODRINTH_PUB && vars.MODRINTH_ID }}
+          modrinth-token: ${{ vars.MODRINTH_PUB && secrets.MODRINTH_TOKEN }}
+          curseforge-id: ${{ vars.CURSEFORGE_PUB && vars.CURSEFORGE_ID }}
+          curseforge-token: ${{ vars.CURSEFORGE_PUB && secrets.CURSEFORGE_TOKEN }}
+          files: |
+            ${{ matrix.loader }}/versions/${{ matrix.version }}/build/libs/*.jar
+          loaders: ${{ join(matrix.supported_loaders, ' ') }}
+          game-versions: |
+            >=${{ steps.gradle-properties.outputs.MIN_MINECRAFT_VERSION }} <=${{ steps.gradle-properties.outputs.MINECRAFT_VERSION }}
+          version: ${{ steps.gradle-properties.outputs.MOD_VERSION }}-${{ matrix.version }}-${{ matrix.loader }}
+          name: ${{ steps.gradle-properties.outputs.MOD_NAME }} ${{ steps.gradle-properties.outputs.MOD_VERSION }} (${{ matrix.version }}-${{ matrix.loader }})
+          version-type: ${{ github.event.release.prerelease && 'beta' || 'release' }}
+          changelog: ${{ github.event.release.body || '' }}
+          retry-attempts: 6
+          retry-delay: 30000

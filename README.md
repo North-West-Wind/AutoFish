@@ -1,33 +1,27 @@
-# AutoFish for Forge
-Finally! An AFK fishing mod for Forge users!
+# AutoFish for Everyone
+Finally! An AFK fishing mod for everyone!
 
 ## Download
-1. Go to the CurseForge page [here](https://www.curseforge.com/minecraft/mc-mods/autofish-for-forge)
-2. Find the version of the mod you want
-3. Find the Minecraft version of the mod you want
-4. Download
-5. Enjoy!
+- [CurseForge](https://www.curseforge.com/minecraft/mc-mods/autofish-for-everyone) 
+- [Modrinth](https://modrinth.com/mod/autofish-for-everyone)
 
 Thanks for using the mod!
 
-### Currently supported versions
-1.21.x  
-(Multiple versions were too much for me. I'm sorry.)
+## Supported Minecraft Versions and Mod Loaders
+Versions not listed here are not supported
 
-### Unsupported, but we have their files
-1.20.x  
-1.19.x  
-1.18.x  
-1.17.x  
-1.16.x  
-1.15.x  
-1.14.4  
-1.13.2  
-1.12.2  
-1.11.2  
-1.10.2  
-1.9.4  
-1.8.9
+| Minecraft Version | Fabric | Forge | NeoForge |
+|-------------------|--------|-------|----------|
+| 26.2              | ✅      | ✅     | ✅        |
+| 26.1.2            | ✅      | ✅     | ✅        |
+| 1.21.11           | ✅      | ✅     | ✅        |
+| 1.21.1            | ✅      | ✅     | ✅        |
+| 1.20.1            | ✅      | ✅     | ❌        |
+| 1.19.4            | ✅      | ✅     | ❌        |
+| 1.19.2            | ✅      | ✅     | ❌        |
+| 1.18.2            | ✅      | ✅     | ❌        |
+| 1.17.1            | ✅      | ✅     | ❌        |
+| 1.16.5            | ✅      | ❌     | ❌        |
 
 ## What does it do?
 This mod allows you to AFK fish (as long as the server allows AFK) anywhere. Can I use it in my singleplayer world? Yes! Can I use it on servers? Yes! The mod is completely client-side! You just need a Forge client on your computer, put this mod into the "mods" folder and you finished the setup! How easy it is!

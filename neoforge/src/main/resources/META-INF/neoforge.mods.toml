@@ -1,0 +1,26 @@
+modLoader = "javafml" #mandatory
+loaderVersion = "*" #mandatory
+license = "${modLicense}" # Review your options at https://choosealicense.com/.
+#issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/" #optional
+[[mods]] #mandatory
+modId = "${modId}" #mandatory
+version = "${modVersion}" #mandatory
+displayName = "${modName}" #mandatory
+#updateJSONURL="https://change.me.example.invalid/updates.json" #optional (see https://docs.neoforged.net/docs/misc/updatechecker/)
+#displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional (displayed in the mod UI)
+logoFile="${modId}.png" #optional
+credits="" #optional
+authors = "${modAuthor}" #optional
+description = '''${modDescription}''' #mandatory (Supports multiline text)
+[[dependencies.${modId}]] #optional
+modId = "neoforge" #mandatory
+type="required" #mandatory (Can be one of "required", "optional", "incompatible" or "discouraged")
+versionRange = "[${neoForgeVersion},)" #mandatory
+ordering = "NONE" # The order that this dependency should load in relation to your mod, required to be either 'BEFORE' or 'AFTER' if the dependency is not mandatory
+side = "BOTH" # Side this dependency is applied on - 'BOTH', 'CLIENT' or 'SERVER'
+[[dependencies.${modId}]]
+modId = "minecraft"
+type="required" #mandatory (Can be one of "required", "optional", "incompatible" or "discouraged")
+versionRange = "[${minMinecraftVersion},)"
+ordering = "NONE"
+side = "BOTH"
