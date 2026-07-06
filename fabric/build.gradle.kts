@@ -34,11 +34,13 @@ loom {
             client()
             configName = "Fabric Client"
             ideConfigGenerated(true)
+            runDirectory = rootProject.layout.projectDirectory.dir("runs/client")
         }
         getByName("server") {
             server()
             configName = "Fabric Server"
             ideConfigGenerated(true)
+            runDirectory = rootProject.layout.projectDirectory.dir("runs/server")
         }
     }
 
